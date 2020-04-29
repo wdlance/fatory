@@ -7,6 +7,12 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
+
+let API_PATH_PRE="http://127.0.0.1:81"
+console.log(process.env.NODE_ENV)
+if(process.env.NODE_ENV!='development'){
+	API_PATH_PRE = ""
+}
 Vue.use(ElementUI);
 /* eslint-disable no-new */
 new Vue({
