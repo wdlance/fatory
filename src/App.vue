@@ -16,6 +16,9 @@ export default {
 		padding: 0px;
 		margin:0px;
 	}
+	a{
+		cursor:pointer;
+	}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,7 +26,7 @@ export default {
   text-align: center;
   color: #2c3e50;
 
-  font-size:18px;
+  font-size:20px;
 }
 .el-input__inner{
 		height:50px;

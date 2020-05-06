@@ -4,32 +4,30 @@
 		  <el-radio-button :label="false">展开</el-radio-button>
 		  <el-radio-button :label="true">收起</el-radio-button>
 		</el-radio-group>
-		<el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
-		 <el-menu-item index="1">
+		<el-menu default-active="1" class="el-menu-vertical-demo" :collapse="isCollapse">
+			
+		 <el-menu-item v-for="menu in menus" :index="menu.id" :key="menu.id" @click="gotoPageClick(menu)">
+		
 		   <i class="el-icon-menu"></i>
-		   <span slot="title">导航二</span>
+		   <span slot="title">{{menu.name}}</span>
 		 </el-menu-item>
-		  <el-menu-item index="2">
-		    <i class="el-icon-menu"></i>
-		    <span slot="title">导航二</span>
-		  </el-menu-item>
-		  <el-menu-item index="3">
-		    <i class="el-icon-menu"></i>
-		    <span slot="title">导航三</span>
-		  </el-menu-item>
-		  <el-menu-item index="4">
-		    <i class="el-icon-menu"></i>
-		    <span slot="title">导航四</span>
-		  </el-menu-item>
+		  
 		</el-menu>
 	</div>
 </template>
 
 <script>
+	import {MenuList} from "../../service/constant"
 	export default{
 		data(){
 			return{
-				isCollapse:false
+				isCollapse:false,
+				menus:MenuList
+			}
+		},
+		methods:{
+			gotoPageClick(menu){
+				this.$router.push(menu.url)
 			}
 		}
 	}

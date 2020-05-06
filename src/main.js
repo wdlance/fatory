@@ -5,14 +5,11 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
+import axios from './service/interceptors'
+import md5 from 'js-md5';
 Vue.config.productionTip = false
-
-let API_PATH_PRE="http://127.0.0.1:81"
-console.log(process.env.NODE_ENV)
-if(process.env.NODE_ENV!='development'){
-	API_PATH_PRE = ""
-}
+Vue.prototype.$axios = axios
+Vue.prototype.md5=md5
 Vue.use(ElementUI);
 /* eslint-disable no-new */
 new Vue({

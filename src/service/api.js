@@ -1,10 +1,24 @@
-//获取用户名列表GetUserList 
-export const GET_USER_LIST_API_PATH = ""
-//登录 Login 
-export const LOGIN_API_PATH = ""
 
+
+let API_PATH_PRE="http://127.0.0.1:81"
+console.log(process.env.NODE_ENV)
+if(process.env.NODE_ENV!='development'){
+	API_PATH_PRE = ""
+}
+//获取用户名列表GetUserList 
+export const USER_API_PATH = API_PATH_PRE+"/User"
+export const GET_USER_LIST_API_PATH = API_PATH_PRE+"/User?Act=GetUserList"
+export const ADD_USER_API_PATH = API_PATH_PRE+"/User?Act=AddUser"
+export const DEL_USER_API_PATH = API_PATH_PRE+"/User"
+
+//登录 Login 
+export const LOGIN_API_PATH = API_PATH_PRE+"/Login"
 //产品列表GetProductList （查询条件 - 产品简称 下拉列表）
 export const GET_PRODUCT_LIST_API_PATH=""
+
+export const ORDER_API_PATH = API_PATH_PRE+"/Order"
+
+export const PRODUCT_API_PATH = API_PATH_PRE+"/Product"
 //创建新产品AddProduct 
 export const ADD_PRODUCT_API_PATH = ""
 //删除产品DelProduct 

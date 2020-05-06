@@ -21,13 +21,17 @@ export default new Router({
 			component:resolve => require(['@/components/main/index.vue'], resolve),
 			children:[{
 				path:"/",
-				name:"OrderManagement",
-				component:resolve => require(['@/components/orderManagement/index.vue'], resolve),
+				name:"User",
+				component:resolve => require(['@/components/user/index.vue'], resolve),
 			},
 			{
-				path:"/OrderManagement",
-				name:"OrderManagerment",
-				component:resolve => require(['@/components/orderManagement/index.vue'], resolve),
+				path:"/user",
+				name:"User",
+				component:resolve => require(['@/components/user/index.vue'], resolve),
+			},{
+				path:"/order",
+				name:"Order",
+				component:resolve => require(['@/components/order/index.vue'], resolve),
 			}]
 		}
   ]
