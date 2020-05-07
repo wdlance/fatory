@@ -76,13 +76,18 @@
 		        prop="BoxTotal"
 		        label="总箱数"
 		        width="180">
-		      </el-table-column>
-			  
+	<template slot-scope="scope">
+				<a @click="toBoxListClick(scope.row)">{{scope.row.BoxTotal}}</a>
+				</template>
+			
 		      </el-table-column>
 		      <el-table-column
 		        prop="RecipientTotal"
 		        label="发货信息（收件人总数）"
 		        width="180">
+				<template slot-scope="scope">
+				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}</a>
+				</template>
 		      </el-table-column>
 			   <el-table-column
 		        prop="CreateTime"
@@ -219,7 +224,23 @@ import AddOrderDialog from "./add"
 			toSnListClick(item){
 this.$router.push({
 	name:"Sn",
-	params:{
+	query:{
+		orderId:item.OrderID
+	}
+})
+			},
+						toBoxListClick(item){
+this.$router.push({
+	name:"Box",
+	query:{
+		orderId:item.OrderID
+	}
+})
+			},
+						toRecipientListClick(item){
+this.$router.push({
+	name:"Delivery",
+	query:{
 		orderId:item.OrderID
 	}
 })

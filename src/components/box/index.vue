@@ -24,7 +24,7 @@
         width="180">
       </el-table-column>
       <el-table-column
-        prop="BoxNum"
+        prop="Box"
         label="箱号"
         width="180">
       </el-table-column>
@@ -69,19 +69,20 @@ export default{
         }
     },
     created(){
-       
+      
+       this.searchForm.orderId = this.$route.query.orderId
         this.getBoxList()
     },
     methods:{
-        getSnList(){
+        getBoxList(){
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetBoxList")
-        formData.append("Page",this.pageData.page)
-        formData.append("RowNum",this.pageData.pageSize)
-        formData.append("Box",this.searchForm.BoxNum)
+        formData.append("Page",this.pageData.Page)
+        formData.append("RowNum",this.pageData.RowNum)
+        formData.append("Box",this.searchForm.boxNum)
         formData.append("OrderID",this.searchForm.orderId)
-        ormData.append("OrderID",this.searchForm.orderId)
+   
        
         this.$axios.post(BOX_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){

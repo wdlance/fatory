@@ -89,7 +89,7 @@ export default{
         this.searchForm.startTime = new Date(new Date().getTime()-1*24*60*60*1000)
         this.searchForm.endTime = new Date()
 
-        this.searchForm.orderId = this.$route.params.orderId
+        this.searchForm.orderId = this.$route.query.orderId
         
         this.getSnList()
     },

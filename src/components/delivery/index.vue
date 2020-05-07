@@ -73,7 +73,7 @@
 </div>
 </template>
 <script>
-import {SN_API_PATH} from "../../service/api"
+import {RECIPIENT_API_PATH } from "../../service/api"
 
 export default{
     data(){
@@ -94,20 +94,23 @@ export default{
     created(){
         this.searchForm.startTime = new Date(new Date().getTime()-1*24*60*60*1000)
         this.searchForm.endTime = new Date()
-        this.getSnList()
+        this.searchForm.orderId = this.$route.query.orderId
+        this.getRecipientList()
     },
     methods:{
-        getSnList(){
+        getRecipientList(){
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
-        formData.append("Act","GetSnList")
+        formData.append("Act","GetRecipientList")
         formData.append("Page",this.pageData.page)
         formData.append("RowNum",this.pageData.pageSize)
-        formData.append("StartTime",this.searchForm.StartTime)
-        formData.append("EndTime",this.searchForm.EndTime)
+        let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+        let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 00:00:00")
+        formData.append("StartTime",new Date(startTime).getTime()/1000)
+        formData.append("EndTime",new Date(endTime).getTime()/1000)
         formData.append("OrderID",this.searchForm.orderId)
-       
-        this.$axios.post(SN_API_PATH,formData).then(res=>{
+       formData.append("ExpressId",this.searchForm.expressId)
+        this.$axios.post(RECIPIENT_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
             this.tableData = res.data.Data
             this.pageData = res.data.Recordcount
