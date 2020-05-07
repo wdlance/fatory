@@ -85,3 +85,9 @@ export default{
     }
 }
 </script>
+
+<style scoped>
+.el-input,.el-select{
+    width:90%;
+}
+</style>

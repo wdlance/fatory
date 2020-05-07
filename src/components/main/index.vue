@@ -3,7 +3,7 @@
 		<el-container>
 		  <el-header>
 			  <div class="header-right">
-				  <a @click="modifyPasswordClick">修改密碼</a>
+				  <a>修改密碼</a>
 				   <a>退出</a>
 			  </div>
 		  </el-header>
@@ -16,42 +16,34 @@
 			</el-main>
 		  </el-container>
 		</el-container>
-		<ModifyPasswordDialog ref="modifyPasswordRef"/>
 	</div>
 </template>
 
 <script>
 	import Menu from "@/components/menu/index"
-	import ModifyPasswordDialog from "./modifyPassword"
 	export default{
-		components:{Menu,ModifyPasswordDialog},
+		components:{Menu},
 		data(){
 			return{
 				
 			}
-		},
-		methods:{
-			
-			modifyPasswordClick(){
-				this.$refs.modifyPasswordRef.show()
-			},
-			logoutClick(){
-				             this.$confirm('', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-         
-          });
-				this.$roouter.push("login")
-			}
 		}
 	}
 </script>
+<style>
+
+</style>
 
 <style scoped="scoped">
 	.el-header{
 		display: flex;
 		justify-content: flex-end;
+		box-sizing:0 0 5px #dcdcdc;
 	}
+	.el-main{
+		padding-top:15px;
+	}
+	.header-right{
+	line-height:60px;
+}
 </style>

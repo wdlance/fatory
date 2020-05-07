@@ -11,7 +11,7 @@
 		          v-for="item in roles"
 		          :key="item.id"
 		          :label="item.name"
-		          :value="item.name">
+		          :value="item.id">
 		        </el-option>
 		      </el-select>
 		  </el-form-item>
@@ -63,20 +63,19 @@
 			}
 		},
 		created(){
-			this.getRoleUserList()
+			this.getRoleUserList(1)
 			
 		},
 		methods:{
 		
-			 getRoleUserList(){
+			 getRoleUserList(roleId){
                 let userInfo = localStorage.getItem("userInfo")
-                
-                let role = this.searchForm.role
+            
                 let formData = new FormData()
-                formData.append("RoleID",role)
-
+                formData.append("RoleID",roleId)
+				formData.append("Act","GetsUserList")
                 this.$axios.post(USER_API_PATH,formData).then(res=>{
-                    this.roles = res.data.Data
+                    this.accounts = res.data.Data
                 })
             },
 			loginClick(){

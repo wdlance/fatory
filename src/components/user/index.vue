@@ -1,23 +1,23 @@
 <template>
 	<div class="page-container">
-    <div>
+    <div class="top-wrapper">
     <el-button type="primary" @click="addUserClick">+添加</el-button>
     </div>
 		 <el-table
 		      :data="userList"
-		      style="width: 100%">
+		      style="width:100%">
 		      <el-table-column
 		        prop="UserName"
 		        label="账号"
-		        width="180">
+		        min-width="150">
 		      </el-table-column>
 		      <el-table-column
 		        prop="role"
 		        label="角色"
-		        width="180">
+		        min-width="150">
 		      </el-table-column>
 		      <el-table-column
-
+              min-width="150"
 		        label="操作">
                 <template slot-scope="scope">
         <a @click="editUserClick(scope)">編輯</a>
@@ -98,5 +98,9 @@ this.$refs.addUserDialogRef.show(0)
 	}
 </script>
 
-<style>
+<style scoped>
+.top-wrapper{
+    display:flex;
+    justy-content:flex-start;
+}
 </style>

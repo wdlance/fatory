@@ -15,9 +15,7 @@ export default {
 	body{
 		padding: 0px;
 		margin:0px;
-	}
-	a{
-		cursor:pointer;
+		min-width:1024px;
 	}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -36,5 +34,10 @@ export default {
 	}
 	.el-form-item {
 		margin-bottom: 30px;
+	}
+	a{
+		text-decoration:none;
+		color:#333;
+		cursor:pointer;
 	}
 </style>
