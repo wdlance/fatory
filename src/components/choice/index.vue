@@ -56,8 +56,17 @@
         prop="address"
         label="操作">
            <template slot-scope="scope">
-      <a>目测备货</a>
-      <a>扫码备货</a>
+           <template v-if="path=='/choice'">  
+           <a>目测备货</a>
+      <a @click="gotoPrepare(scope.row)">扫码备货</a>
+           
+           </template>
+                <template v-if="path=='/qc'">  
+           <a>目测品管</a>
+      <a @click="gotoPrepare(scope.row)">扫码品管</a>
+           
+           </template>
+    
       </template>
       </el-table-column>
    
@@ -71,8 +80,12 @@ export default{
             searchForm:{
                 boxNum:""
             },
-            tableData:[]
+            tableData:[],
+            path:""
         }
+    },
+    created(){
+      this.path = this.$route.path
     },
     methods:{
         resetClick(){
@@ -83,14 +96,8 @@ export default{
         searchClick(){
 
         },
-        repairClick(scope){
-            this.$prompt('SN号', '', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-         
-        }).then(res=>{
-
-        })
+        gotoPrepare(item){
+          this.$router.push("/prepare")
         }
     }
 }

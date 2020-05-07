@@ -65,9 +65,12 @@
 		        width="180">
 		      </el-table-column>
 			   <el-table-column
-		        prop="SnTotal"
+		       prop="SnTotal"
 		        label="SN总数"
 		        width="180">
+				<template slot-scope="scope">
+				<a @click="toSnListClick(scope.row)">{{scope.row.SnTotal}}</a>
+				</template>
 		      </el-table-column>
 		      <el-table-column
 		        prop="BoxTotal"
@@ -93,22 +96,26 @@
 				<template slot-scope="scope">
 				<div>
 				<a>
-				导入《SN》 
+				导入《SN》
+				<input type="file" @change="changeFile($event,scope.row,1)">
 				</a>
 				</div>
 				<div>
 				<a>
 				 导入《发货申请单》
+				 	<input type="file" @change="changeFile($event,scope.row,2)">
 				</a>
 				</div>
 				<div>
 				<a>
 				导入《五码合一》
+					<input type="file" @change="changeFile($event,scope.row,3)">
 				</a>
 				</div>
 				<div>
 				<a>
 				导入《电子运单》
+					<input type="file" @change="changeFile($event,scope.row,4)">
 				</a>
 				</div>
 				</template>
@@ -120,7 +127,7 @@
 				 <template slot-scope="scope">
 				 <div>
 				 <a>
-				 导入《电子运单》
+				导出《跨越物流的发货信息》
 				 </a>
 
     </div>
@@ -137,7 +144,7 @@
 
 		        label="操作">
                 <template slot-scope="scope">
-        <a @click="editOrderClick(scope)">編輯</a>
+     
         <a @click="delOrderClick(scope)">刪除</a>
         </template>
 		      </el-table-column>
@@ -146,17 +153,16 @@
          <el-pagination
     
 
-      :current-page="currentPage"
-
-    
+      :current-page="pageData.Page"
+	  :page-size ="pageData.RowNumS"
       layout="total,pager, prev, next"
-      :total="400"></el-pagination>  
+      :total="RowNum"></el-pagination>  
 	  <AddOrderDialog ref="addOrderDialogRef" v-on:getOrderList="getOrderList"/>
 	</div>
 </template>
 
 <script>
-import {ORDER_API_PATH,PRODUCT_API_PATH} from "../../service/api"
+import {ORDER_API_PATH,PRODUCT_API_PATH,UPLOAD_SN_API_PATH,UPLOAD_DISTRIBUTE_API_PATH,UPLOAD_WAYBILL_API_PATH,UPLOAD_5CODE_API_PATH} from "../../service/api"
 import AddOrderDialog from "./add"
 	export default{
 		components:{AddOrderDialog},
@@ -164,11 +170,15 @@ import AddOrderDialog from "./add"
 			return{
                 orderList:[],
 				productList:[],
-				currentPage:1,
+				RowNum:0,
 				searchForm:{
 					startTime:new Date(new Date().getTime()-1*24*60*60*1000),
 					endTime:new Date(),
 					productName:""
+				},
+				pageData:{
+					Page:1,
+					RowNum:20
 				}
 			}
 		},
@@ -177,13 +187,54 @@ import AddOrderDialog from "./add"
             
         },
         methods:{
+			changeFile(e,item,type){
+				let file = e.target.files[0]
+				let url = ""
+				if(type==1){
+					url = UPLOAD_SN_API_PATH
+				}else if(type==2){
+					url = UPLOAD_DISTRIBUTE_API_PATH
+				}else if(type==3){
+					url = UPLOAD_5CODE_API_PATH
+					}else if(type==4){
+					url = UPLOAD_WAYBILL_API_PATH
+				}
+				let formData = new FormData()
+			
+            formData.append("Token",sessionStorage.getItem("token"))
+						 formData.append("OrderID",item.OrderID)
+            formData.append("file",file)
+			this.$axios.post(url,formData).then(res=>{
+				
+				if(res.data.Ret == 0){
+					this.$message("文件上传成功")
+					this.getOrderList()
+				}else{
+					this.$message("文件上传失败")
+				}
+			}).finally(()=>{
+				e.target.value = ""
+			})
+			},
+			toSnListClick(item){
+this.$router.push({
+	name:"Sn",
+	params:{
+		orderId:item.OrderID
+	}
+})
+			},
 			getProductList(){
 				 let formData = new FormData()
             formData.append("Act","GetProductList")
             formData.append("Token",sessionStorage.getItem("token"))
+			formData.append("Page",this.pageData.Page)
+			formData.append("RowNum",this.pageData.RowNum)
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
+					
                     this.productList = res.data.Data
+					this.RowNum = res.data.Recordcount
                 }
             }).finally(()=>{
 				 this.getOrderList()
@@ -200,7 +251,7 @@ import AddOrderDialog from "./add"
 						let data = res.data.Data
 						data = data.map(v=>{
 							let product = this.productList.find(item=>item.ProductID == v.ProductID)
-							
+							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD')
 							v.ProductBriefName = product?product.ProductBriefName:""
 							return v
 						})
@@ -221,7 +272,7 @@ import AddOrderDialog from "./add"
 				}
 			},
 			searchClick(){
-
+				this.getProductList()
 			},
 			editOrderClick(scope){
 				this.$refs.addOrderDialogRef.show(1,scope.row)
@@ -275,5 +326,19 @@ import AddOrderDialog from "./add"
 	display:flex;
 	justy-content:flex-start;
 	margin-bottom:15px;
+}
+td a{
+	position:relative;
+	display:block;
+	margin:10px 0;
+	color: #3a8ee6;
+}
+input[type=file]{
+	position:absolute;
+	left:0px;
+	top:0px;
+	width:100%;
+	height:100%;
+	opacity:0;
 }
 </style>

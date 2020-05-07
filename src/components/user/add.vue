@@ -76,7 +76,7 @@ export default{
             if(res.data.Ret == 0){
                 this.dialogFormVisible = false
                 this.$message("用戶添加成功")
-                this.getUserList()
+                this.$emit("getUserList")
             }else{
                 this.$message(res.data.Msg)
             }
@@ -88,6 +88,6 @@ export default{
 
 <style scoped>
 .el-input,.el-select{
-    width:90%;
+    width:80%;
 }
 </style>

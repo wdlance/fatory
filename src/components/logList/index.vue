@@ -48,7 +48,8 @@
       </el-table-column>
     </el-table>
     <el-pagination
-    
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
       :current-page.sync="pageData.page"
       :page-size="20"
       layout="total, prev, pager, next"
@@ -64,9 +65,7 @@ export default{
             tableData:[],
             searchForm:{
                 startTime:new Date(new Date().getTime()-1*24*60*60*1000),
-                endTime:new Date(),
-                account:"",
-                content:""
+                endTime:new Date()
             },
             pageData:{
               page:1,
@@ -87,7 +86,7 @@ export default{
         formData.append("RowNum",this.pageData.pageSize)
         formData.append("StartTime",this.searchForm.StartTime)
         formData.append("EndTime",this.searchForm.EndTime)
-        formData.append("UserName",this.searchForm.account)
+        ormData.append("UserName",this.searchForm.account)
         formData.append("Content",this.searchForm.content)
         this.$axios.post(LOG_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){

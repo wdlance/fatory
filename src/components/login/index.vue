@@ -6,7 +6,7 @@
 		    prop="role"
 		    
 		  >
-		    <el-select v-model="searchForm.role" placeholder="">
+		    <el-select v-model="searchForm.role" placeholder="" @change="roleChange">
 		        <el-option
 		          v-for="item in roles"
 		          :key="item.id"
@@ -22,10 +22,10 @@
 		  >
 		    <el-select v-model="searchForm.account" placeholder="">
 		        <el-option
-		          v-for="item in accounts"
-		          :key="item.id"
-		          :label="item.name"
-		          :value="item.name">
+		          v-for="(item,index) in accounts"
+		          :key="index"
+		          :label="item.UserName"
+		          :value="item.UserName">
 		        </el-option>
 		      </el-select>
 		  </el-form-item>
@@ -47,8 +47,7 @@
 
 <script>
 	import {RoleList} from "../../service/constant"
-	import {USER_API_PATH,LOGIN_API_PATH} from '../../service/api';
-	
+	import {USER_API_PATH,LOGIN_API_PATH} from "../../service/api"
 	export default{
 		data(){
 			return{
@@ -63,43 +62,60 @@
 			}
 		},
 		created(){
-			this.getRoleUserList(1)
-			
+			this.getUserList()
 		},
+
 		methods:{
-		
-			 getRoleUserList(roleId){
-                let userInfo = localStorage.getItem("userInfo")
-            
+			roleChange(){
+this.getUserList()
+			},
+		getUserList(){
+               
                 let formData = new FormData()
-                formData.append("RoleID",roleId)
-				formData.append("Act","GetsUserList")
+                formData.append("RoleID",this.searchForm.role)
+                formData.append("Act","GetUserList")
                 this.$axios.post(USER_API_PATH,formData).then(res=>{
                     this.accounts = res.data.Data
+					this.searchForm.account = this.accounts[0]?this.accounts[0].UserName:""
                 })
             },
 			loginClick(){
-				if(this.searchForm.role==1){
-				this.searchForm.account = "superadmin"
-				this.searchForm.password = "jld_chaoguan_*()"
-			}
-
-			let formData = new FormData()
-			formData.append("UserName",this.searchForm.account)
-			let md5_password = this.md5(this.searchForm.password)
-			formData.append("Password",md5_password)
+				if(this.searchForm.account==""||this.searchForm.password==""){
+					this.$message("账号/密码不能为空")
+					return 
+				}
+				
+				let formData = new FormData()
+				formData.append("UserName",this.searchForm.account)
+				formData.append("Password",this.md5(this.searchForm.password))
 				this.$axios.post(LOGIN_API_PATH,formData).then(res=>{
-					console.log(this)
-					if(res.data.Ret == 0 ){
+					if(res.data.Ret == 0){
 						sessionStorage.setItem("token",res.data.Token)
-							let userInfo = JSON.stringify(Object.assign(this.searchForm,{
-								password:md5_password
-							}))
-							localStorage.setItem("userInfo",userInfo)
-							this.$router.push('user')
-							
+						if(this.searchForm.role==1){
+					localStorage.setItem("auth",JSON.stringify([1]))
+					this.$router.push('/user')
+				}else if(this.searchForm.role==2){
+					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))
+					this.$router.push('/order')
+				}else if(this.searchForm.role==3){
+					localStorage.setItem("auth",JSON.stringify([2]))
+					this.$router.push('/order')
+				}else if(this.searchForm.role==4){
+					localStorage.setItem("auth",JSON.stringify([6]))
+					this.$router.push('/pack')
+				}else if(this.searchForm.role==5){
+					localStorage.setItem("auth",JSON.stringify([7]))
+					this.$router.push('/prepare')
+				}else if(this.searchForm.role==6){
+					localStorage.setItem("auth",JSON.stringify([8]))
+					this.$router.push('/choice')
+				}else{
+					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))
+					this.$router.push('/order')
+				}
+				
 					}else{
-						this.$message(res.Msg)
+						this.$message(res.data.Msg)
 					}
 				})
 			}

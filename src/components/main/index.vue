@@ -3,8 +3,9 @@
 		<el-container>
 		  <el-header>
 			  <div class="header-right">
-				  <a>修改密碼</a>
-				   <a>退出</a>
+				  <a @click="modifyPasswordClick">修改密碼</a>
+				  &nbsp;
+				   <a @click="exitClick">退出</a>
 			  </div>
 		  </el-header>
 		  <el-container>
@@ -16,16 +17,26 @@
 			</el-main>
 		  </el-container>
 		</el-container>
+		<modifyPassword ref="modifyPasswordRef"></modifyPassword>
 	</div>
 </template>
 
 <script>
 	import Menu from "@/components/menu/index"
+	import modifyPassword from "./modifyPassword"
 	export default{
-		components:{Menu},
+		components:{Menu,modifyPassword},
 		data(){
 			return{
 				
+			}
+		},
+		methods:{
+			modifyPasswordClick(){
+				this.$refs.modifyPasswordRef.show()
+			},
+			exitClick(){
+
 			}
 		}
 	}

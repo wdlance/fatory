@@ -105,7 +105,7 @@ export default{
         formData.append("RowNum",this.pageData.pageSize)
         formData.append("StartTime",this.searchForm.StartTime)
         formData.append("EndTime",this.searchForm.EndTime)
-        ormData.append("OrderID",this.searchForm.orderId)
+        formData.append("OrderID",this.searchForm.orderId)
        
         this.$axios.post(SN_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){

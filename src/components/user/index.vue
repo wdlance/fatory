@@ -12,7 +12,7 @@
 		        min-width="150">
 		      </el-table-column>
 		      <el-table-column
-		        prop="role"
+		        prop="RoleName"
 		        label="角色"
 		        min-width="150">
 		      </el-table-column>
@@ -29,40 +29,53 @@
           <el-pagination
     
 
-      :current-page="currentPage"
-
-    
+      :current-page="pageData.Page"
+      :page-size="pageData.RowNum"
       layout="total,pager, prev, next"
-      :total="400"></el-pagination>  
-      <AddUserDialog ref="addUserDialogRef"/>
+      :total="RowNum"></el-pagination>  
+      <AddUserDialog ref="addUserDialogRef" @getUserList="getUserList"/>
 	</div>
 </template>
 
 <script>
 import AddUserDialog from "./add"
 import {USER_API_PATH} from "../../service/api"
-
+import {RoleList} from "../../service/constant"
 	export default{
         components:{AddUserDialog},
 		data(){
 			return{
                 userList:[],
-                currentPage:0,
+                RowNum:0,
+                pageData:{
+                    Page:1,
+                    RowNum:20,
+                    
+                }
 			}
 		},
         created(){
             this.getUserList()
+           
         },
         methods:{
             getUserList(){
                 let userInfo = localStorage.getItem("userInfo")
        
                 let formData = new FormData()
-                formData.append("RoleID",1)
+                
                 formData.append("Act","GetUserList")
                 formData.append("Token",sessionStorage.getItem("token"))
                 this.$axios.post(USER_API_PATH,formData).then(res=>{
-                    this.userList = res.data.Data
+                
+                    this.userList = res.data.Data.map(v=>{
+                        
+                        let role = RoleList.find(item=>item.id == v.RoleID)
+                        v.RoleName = role?role.name:""
+                        return v
+                    })
+                        
+                    this.RowNum = res.data.Recordcount
                 })
             },
             addUserClick(){

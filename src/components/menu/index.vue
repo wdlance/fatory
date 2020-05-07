@@ -4,9 +4,9 @@
 		  <el-radio-button :label="false">展开</el-radio-button>
 		  <el-radio-button :label="true">收起</el-radio-button>
 		</el-radio-group>
-		<el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+		<el-menu :default-active="(menuList[0].id).toString()" :unique-opened="true" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
 		 <template v-for="item in menuList">
-		  <el-submenu :key="item.id" :index="item.id" v-if="item.children">
+		  <el-submenu :key="item.id" :default-active="item.children[0].id" :index="item.id.toString()" v-if="item.children">
 		  <template slot="title">
      <div @click="gotoPage(item.url)">
 		   <i class="el-icon-menu"></i>
@@ -14,7 +14,7 @@
 		   </div>
 		  
     </template>
-		   <el-menu-item  v-if="item.children" v-for="sub in item.children" :key="sub.id" :index="sub.id ">
+		   <el-menu-item  v-if="item.children" v-for="sub in item.children" :key="sub.id" :index="sub.id.toString() ">
 		    <div @click="gotoPage(sub.url)">
 		   <i class="el-icon-menu"></i>
 		  <span>{{sub.name}}</span>
@@ -22,7 +22,7 @@
 		   </el-menu-item>
 		   
 		 </el-submenu>
-		<el-menu-item :key="item.id" :index="item.id " v-else>
+		<el-menu-item :key="item.id" :index="item.id.toString()" v-else>
 		    <div @click="gotoPage(item.url)">
 		   <i class="el-icon-menu"></i>
 		  <span>{{item.name}}</span>
@@ -42,6 +42,16 @@ import {MenuList} from "../../service/constant"
 			return{
 				isCollapse:false,
 				menuList:MenuList
+			}
+		},
+		created(){
+			let auth = localStorage.getItem("auth")
+			if(auth){
+				this.menuList = this.menuList.filter(item=>{
+					return JSON.parse(auth).find(v=>v==item.id)
+				})
+			}else{
+				this.$router.push("/login")
 			}
 		},
 		methods:{

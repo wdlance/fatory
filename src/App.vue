@@ -24,7 +24,10 @@ export default {
   text-align: center;
   color: #2c3e50;
 
-  font-size:20px;
+  font-size:22px;
+}
+.el-table{
+	font-size:22px;
 }
 .el-input__inner{
 		height:50px;

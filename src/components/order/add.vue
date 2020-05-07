@@ -73,7 +73,11 @@ export default{
                 }
             }else{
                 this.formData = {
-                    
+                     orderId:"",
+                productId:"",
+                productTotalNum:"",
+                productTotalNum:"",
+                productNumberInPerBox:"",
                 }
             }
         },

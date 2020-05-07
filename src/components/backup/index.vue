@@ -33,12 +33,10 @@ export default{
       let formData = new FormData()
       formData.append("Token",sessionStorage.getItem("token"))
       formData.append("Act","GetSystem")
-      this.$axios.post(SYSTEM_API_PATH,formData).then(res=>{
+      this.$axios.post(SYSTEM_API_PATH,FormData).then(res=>{
         if(res.data.Ret == 0){
           this.backupPath = res.data.Data.DatabaseBackupPath
           this.backupTime = res.data.Data.DatabaseBackupTime
-          this.logClearTime = res.data.Data.LogAutocleanCycle
-
         }else{
           this.$message(res.data.Msg)
         }
@@ -51,8 +49,7 @@ export default{
       formData.append("DatabaseBackupPath",this.backupPath)
       formData.append("DatabaseBackupTime",this.backupTime)
       formData.append("LogAutocleanCycle",this.logClearTime)
-      
-      this.$axios.post(SYSTEM_API_PATH,formData).then(res=>{
+      this.$axios.post(SYSTEM_API_PATH,FormData).then(res=>{
         if(res.data.Ret == 0){
           this.$message("系统设置成功")
         }else{

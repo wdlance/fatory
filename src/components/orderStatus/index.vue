@@ -160,7 +160,12 @@ export default{
     methods:{
         resetClick(){
             this.searchForm = {
-                boxNum:""
+                boxNum:"",
+                startTime:new Date(new Date().getTime()-1*24*60*60*1000),
+                endTime:new Date(),
+                status1:0,
+                status2:0,
+                status3:0,
             }
         },
         searchClick(){

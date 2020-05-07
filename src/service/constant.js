@@ -49,11 +49,19 @@ export const MenuList = [{
 },{
 	id:6,
 	name:"扫描装箱",
-	url:"/pack"
+	children:[{
+		id:61,
+		name:"扫描装箱",
+		url:"/pack"
+	},{
+		id:62,
+		name:"订单状态",
+		url:"/exceptionBox"
+	}]
 },{
 	id:7,
 	name:"仓库备货",
-	url:"/prepare"
+	url:"/choice"
 },{
 	id:8,
 	name:"品管",
@@ -61,7 +69,7 @@ export const MenuList = [{
 	children:[{
 		id:81,
 		name:"发货信息管理",
-		url:"/choice"
+		url:"/qc"
 	},{
 		id:82,
 		name:"订单状态",
