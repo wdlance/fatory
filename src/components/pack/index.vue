@@ -1,29 +1,30 @@
 <template>
 <div class="page-container">
-<el-form label-position="right" label-width="100px" :model="formData">
+<el-form label-position="right" label-width="120px" :model="formData">
   <el-form-item label="箱号">
-    <el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号"></el-input>
+    <el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @focus="focusInput('boxNum')"></el-input>
   </el-form-item>
   <el-form-item label="SN号起始">
-    <el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始"></el-input>
+    <el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始" @focus="focusInput('snStart')"></el-input>
   </el-form-item>
   <el-form-item label="SN号终止">
-    <el-input v-model="formData.snEnd" ref="snEndRef" placeholder="请扫描SN号终止"></el-input>
+    <el-input v-model="formData.snEnd" ref="snEndRef" placeholder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input>
   </el-form-item>
 </el-form>
 <div class="line"></div>
-<div>第{{currentNum}}/{{totalNum}}个</div>
-<el-form label-position="right" label-width="100px">
+<div style="margin-bottom:30px;">第{{currentNum}}/{{totalNum}}个</div>
+<el-form label-position="right" label-width="120px">
   <el-form-item label="SN号">
 
-    <input class="el-input__inner" v-model="formData.sn" ref="snRef" placeholder="请扫描单个产品SN号" @paste="pasteSn($event)" />
-    <i class="el-icon-check" v-if="snChecked&&snRight"></i>
-     <i class="el-icon-close" v-if="snChecked&&!snRight"></i>
+    <input class="el-input__inner" v-model="formData.sn" ref="snRef" placeholder="请扫描单个产品SN号" @change="inputSn($event)"  @focus="focusInput('sn')"/>
+
+		 <div class="box-right" v-if="snChecked&&snRight"></div>
+		  <div class="box-error" v-if="snChecked&&!snRight"></div>
      <div class="error" v-if="snChecked&&!snRight">SN号 {{formData.sn}} 和箱号 {{formData.boxNum}} 不匹配</div>
   </el-form-item>
   
 </el-form>
-<el-button type="primary" style="margin-top:50px;">强制确认</el-button>
+<el-button type="primary" style="margin-top:50px;" @click="confirmSetStatusBoxClick">强制确认</el-button>
 </div>
 </template>
 <script>
@@ -41,11 +42,12 @@ export default{
 data(){
   return {
     focus:'boxNum',
-    totalNum:50,
+    totalNum:0,
     currentNum:0,
     snChecked:false,
     snRight:true,
     boxData:{},//从后台获取的每箱数据
+    snOkList:[],
     formData:{
       boxNum:"",
       snStart:"",
@@ -57,7 +59,8 @@ data(){
 mounted(){
 
 document.body.onkeydown = (e)=>{
-
+  
+console.log("focus="+this.focus)
   if(e.keyCode == 13){
 if(this.focus == 'boxNum'){
     this.focus = 'snStart'
@@ -73,28 +76,25 @@ if(this.focus == 'boxNum'){
     this.focus = 'sn'
     this.$refs.snRef.focus()
   }else if(this.focus == 'sn'){
-
+ if(this.box==""||this.snStart==""||this.snEnd==""){
+        return
+      }
     if(this.currentNum<this.totalNum-1){
       
     this.currentNum+=1
 
     }else{
       this.currentNum+=1
-      this.focus = "boxNum"
-      this.$refs.boxNumRef.focus()
-      this.formData = {
-         boxNum:"",
-      snStart:"",
-      snEnd:"",
-      sn:""
-      }
-      this.totalNum = 0
-      this.currentNum = 0
-
+     
+      this.confirmSetStatusBoxClick()
+   
     }
+    this.checkSn()
 
   }
-  }
+  }else if(e.keyCode==86){
+    this.formData.sn = ""
+  }//ctrl+v
   
 }
 this.$nextTick(()=>{
@@ -102,6 +102,9 @@ this.$nextTick(()=>{
 })
 },
 methods:{
+  focusInput(str){
+    this.focus = str
+  },
     checkBox(){
     if(this.formData.boxNum ==  this.boxData.Box){
       return true
@@ -117,37 +120,76 @@ methods:{
     }
   },
   checkSnEnd(){
-    if(this.formData.snEnd ==  this.boxData.SnEnd){
-      return true
+    if(this.formData.snEnd !=  this.boxData.SnEnd){
+        this.$message("Sn号终止不匹配")
     }else{
-      return false
+    
     }
   },
-  checkSn(sn){
-    if(this.boxData.SnList.findIndex(sn)>-1){
-      return true
+  checkSn(){
+    
+    let sn = this.formData.sn
+    this.snChecked = true
+    if(this.boxData.SnList.findIndex(v=>v==sn)<0){
+        this.$message("Sn不匹配")
+        this.snRight = false
     }else{
-      return false
+
+      this.snRight = true
     }
   },
   getBoxBySnStart(snStart){
-    let formDatam = new formData()
-    formData.append("Act",getBoxBySnStart)
+    let formData = new FormData()
+    formData.append("Act","GetBoxBySnStart")
     formData.append("Token",sessionStorage.getItem("token"))
       formData.append("SnStart",this.formData.snStart)
-   
+  
     this.$axios.post(BOX_API_PATH,formData).then(res=>{
       if(res.data.Ret == 0){
         this.boxData = res.data.Data
+        this.totalNum = this.boxData.SnList.length
         if(!this.checkBox())
         this.checkSnStart()
+      }else{
+        this.$message(res.data.Msg)
       }
     })
   },
+  confirmSetStatusBoxClick(){
+        let formData = new FormData()
+    formData.append("Act","SetStatusBox")
+    formData.append("Token",sessionStorage.getItem("token"))
+      formData.append("SnStart",this.formData.snStart)
+       formData.append("SnEnd",this.formData.snEnd)
+   formData.append("Box",this.formData.boxNum)
+   formData.append("SnOkList",JSON.stringify(this.snOkList))
+   this.$axios.post(BOX_API_PATH,formData).then(res=>{
+     if(res.data.Ret==0){
+         
+     }else{
+       this.$message(res.data.Msg)
+     }
+   }).finally(()=>{
+      this.focus = "boxNum"
+      this.$refs.boxNumRef.focus()
+      this.snOkList = []
+      this.formData = {
+         boxNum:"",
+      snStart:"",
+      snEnd:"",
+      sn:""
+      }
+      this.totalNum = 0
+      this.currentNum = 0
+      this.snChecked = false
+   })
+  },
   pasteSn(e){
-    
-    console.log(e.target.value)
+
     this.formData.sn = e.target.value
+  },
+  inputSn(e){
+    this.snOkList = this.snOkList.concat([this.formData.sn])
   }
 }
 }
@@ -170,6 +212,24 @@ methods:{
   margin-left:10px;
   top:50%;
   transform:translateY(-50%);
+  font-size: 50px;
+}
+.box-right,.box-error{
+  position:absolute;
+  width:50px;
+  height: 50px;
+  left:100%;
+  margin-left:10px;
+  top:50%;
+  transform:translateY(-50%);
+}
+.box-right{
+	background: url(../../assets/right.png)no-repeat center;
+	background-size: contain;
+}
+.box-error{
+	background: url(../../assets/error.png)no-repeat center;
+	background-size: contain;
 }
 .el-form{
   width:90%;

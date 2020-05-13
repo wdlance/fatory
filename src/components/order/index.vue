@@ -24,19 +24,19 @@
   </div>
    <div class="block">
     <span class="label-text">产品简称</span>
-   <el-select v-model="searchForm.ProductID" placeholder="请选择">
+   <el-select v-model="searchForm.productId" placeholder="请选择">
     <el-option
       v-for="item in productList"
       :key="item.ProductID"
-      :label="item.productBriefName"
+      :label="item.ProductBriefName"
       :value="item.ProductID">
 	  {{item.ProductBriefName}}
     </el-option>
   </el-select>
   </div>
   <div class="operate">
-   <el-button type="primary" @click="searchClick">+查詢</el-button>
-    <el-button type="primary" @click="resetClick">+重置</el-button>
+   <el-button type="primary" @click="searchClick">查询</el-button>
+    <el-button type="primary" @click="resetClick">重置</el-button>
   </div>
     
     </div>
@@ -131,14 +131,18 @@
 		        width="180">
 				 <template slot-scope="scope">
 				 <div>
-				 <a>
+				 <a :href="scope.row.href1">
 				导出《跨越物流的发货信息》
 				 </a>
 
     </div>
 	 <div>
-				 <a>
-				 导出《出货交接明细表》 及《出货信息表》
+				 <a :href="scope.row.href2">
+				 导出《出货交接明细表》
+				 </a>
+
+				  <a :href="scope.row.href3">
+				 导出《出货信息表》
 				 </a>
 
     </div>
@@ -159,7 +163,7 @@
     
 
       :current-page="pageData.Page"
-	  :page-size ="pageData.RowNumS"
+	  :page-size ="pageData.RowNum"
       layout="total,pager, prev, next"
       :total="RowNum"></el-pagination>  
 	  <AddOrderDialog ref="addOrderDialogRef" v-on:getOrderList="getOrderList"/>
@@ -167,7 +171,7 @@
 </template>
 
 <script>
-import {ORDER_API_PATH,PRODUCT_API_PATH,UPLOAD_SN_API_PATH,UPLOAD_DISTRIBUTE_API_PATH,UPLOAD_WAYBILL_API_PATH,UPLOAD_5CODE_API_PATH} from "../../service/api"
+import {ORDER_API_PATH,PRODUCT_API_PATH,UPLOAD_SN_API_PATH,UPLOAD_DISTRIBUTE_API_PATH,UPLOAD_WAYBILL_API_PATH,UPLOAD_5CODE_API_PATH,DOWNLOAD_DISTRIBUTE_API_PATH,DOWNLOAD_HANDOVER_API_PATH,DOWNLOAD_KUAYUEEXPRESS_API_PATH} from "../../service/api"
 import AddOrderDialog from "./add"
 	export default{
 		components:{AddOrderDialog},
@@ -177,12 +181,12 @@ import AddOrderDialog from "./add"
 				productList:[],
 				RowNum:0,
 				searchForm:{
-					startTime:new Date(new Date().getTime()-1*24*60*60*1000),
-					endTime:new Date(),
-					productName:""
+					startTime:new Date(new Date().toLocaleDateString()),
+					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+					productId:0
 				},
 				pageData:{
-					Page:1,
+					Page:0,
 					RowNum:20
 				}
 			}
@@ -192,6 +196,59 @@ import AddOrderDialog from "./add"
             
         },
         methods:{
+			downloadKuayueExpress(item){
+				let formData = new FormData()
+				formData.append("Token",sessionStorage.getItem("token"))
+				formData.append("OrderID",item.OrderID)
+				this.$axios.get(DOWNLOAD_KUAYUEEXPRESS_API_PATH,{
+					params:{
+						Token:sessionStorage.getItem("token"),
+						OrderID:item.OrderID
+					}
+				},{
+    headers: {
+      "Content-Type": "application/octet-stream"
+    },
+	  responseType: 'blob' 
+  }).then(res=>{
+					
+					  var blob = this.data;
+        var reader = new FileReader();
+        reader.readAsDataURL(blob); // 转换为base64，可以直接放入a表情href
+        reader.onload = function (e) {
+          // 转换完成，创建一个a标签用于下载
+          var a = document.createElement("a");
+          a.download = name + ".xls";
+          a.href = e.target.result;
+          $("body").append(a); // 修复firefox中无法触发click
+          a.click();
+          resolve(200)
+          $(a).remove();
+        };
+				})
+			},
+				downloadHandover(item){
+			let formData = new FormData()
+				formData.append("Token",sessionStorage.getItem("token"))
+				formData.append("OrderID",item.OrderID)
+				this.$axios.get(DOWNLOAD_HANDOVER_API_PATH,{
+					params:{
+						Token:sessionStorage.getItem("token"),
+						OrderID:item.OrderID
+					}
+				})
+			},	 
+				downloadDistribute(item){
+			let formData = new FormData()
+				formData.append("Token",sessionStorage.getItem("token"))
+				formData.append("OrderID",item.OrderID)
+				this.$axios.get(DOWNLOAD_DISTRIBUTE_API_PATH,{
+					params:{
+						Token:sessionStorage.getItem("token"),
+						OrderID:item.OrderID
+					}
+				})
+			},
 			changeFile(e,item,type){
 				let file = e.target.files[0]
 				let url = ""
@@ -212,20 +269,23 @@ import AddOrderDialog from "./add"
 			this.$axios.post(url,formData).then(res=>{
 				
 				if(res.data.Ret == 0){
-					this.$message("文件上传成功")
+					this.$message("成功导入"+res.data.Data+"条数据")
 					this.getOrderList()
 				}else{
-					this.$message("文件上传失败")
+					this.$message(res.data.Msg)
 				}
 			}).finally(()=>{
 				e.target.value = ""
 			})
 			},
 			toSnListClick(item){
+				
 this.$router.push({
 	name:"Sn",
 	query:{
-		orderId:item.OrderID
+		orderId:item.OrderID,
+		startTime:this.searchForm.startTime.getTime(),
+		endTime:this.searchForm.endTime.getTime()
 	}
 })
 			},
@@ -233,7 +293,9 @@ this.$router.push({
 this.$router.push({
 	name:"Box",
 	query:{
-		orderId:item.OrderID
+		orderId:item.OrderID,
+		startTime:this.searchForm.startTime.getTime(),
+		endTime:this.searchForm.endTime.getTime()
 	}
 })
 			},
@@ -241,7 +303,9 @@ this.$router.push({
 this.$router.push({
 	name:"Delivery",
 	query:{
-		orderId:item.OrderID
+		orderId:item.OrderID,
+		startTime:this.searchForm.startTime.getTime(),
+		endTime:this.searchForm.endTime.getTime()
 	}
 })
 			},
@@ -249,12 +313,14 @@ this.$router.push({
 				 let formData = new FormData()
             formData.append("Act","GetProductList")
             formData.append("Token",sessionStorage.getItem("token"))
-			formData.append("Page",this.pageData.Page)
-			formData.append("RowNum",this.pageData.RowNum)
+		
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
 					
-                    this.productList = res.data.Data
+                    this.productList = [{
+						ProductID:0,
+						ProductBriefName:"全部"
+					}].concat(res.data.Data)
 					this.RowNum = res.data.Recordcount
                 }
             }).finally(()=>{
@@ -265,19 +331,29 @@ this.$router.push({
 				let formData = new FormData()
 				formData.append("Act","GetOrderList")
 				formData.append("Token",sessionStorage.getItem("token"))
-				
+				formData.append("ProductID",this.searchForm.productId)
+					formData.append("Page",this.pageData.Page)
+			formData.append("RowNum",this.pageData.RowNum)
+							formData.append("StartTime",this.searchForm.startTime/1000)
+			formData.append("EndTime",this.searchForm.endTime/1000)
 				this.$axios.post(ORDER_API_PATH,formData).then(res=>{
 					
 					if(res.data.Ret == 0){
 						let data = res.data.Data
+						if(!data){
+							return
+						}
 						data = data.map(v=>{
 							let product = this.productList.find(item=>item.ProductID == v.ProductID)
-							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD')
+							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD hh:mm:ss')
 							v.ProductBriefName = product?product.ProductBriefName:""
+							v.href1 = DOWNLOAD_KUAYUEEXPRESS_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+							v.href2 = DOWNLOAD_HANDOVER_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+							v.href3 = DOWNLOAD_DISTRIBUTE_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
 							return v
 						})
 						this.orderList = data
-						
+						this.RowNum = res.data.Recordcount
 						
 					}
 				})
@@ -287,8 +363,8 @@ this.$router.push({
 			},
 			resetClick(){
 				this.searchForm = {
-					startTime:new Date(new Date().getTime()-1*24*60*1000),
-					endTime:new Date(),
+						startTime:new Date(new Date().toLocaleDateString()),
+					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
 					productName:""
 				}
 			},
@@ -328,9 +404,10 @@ this.$router.push({
 	align-items:center;
 	border:1px solid #dcdcdc;
 	padding:15px;
+	justy-content:flex-start;
 }
 .block{
-	width:50%;
+	  min-width:33%;
 	padding:15px;
 	box-sizing:border-box;
 	display:flex;

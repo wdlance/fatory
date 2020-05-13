@@ -19,7 +19,7 @@
 		      <el-table-column
               min-width="150"
 		        label="操作">
-                <template slot-scope="scope">
+                <template slot-scope="scope" v-if="scope.row.RoleID!=1">
         <a @click="editUserClick(scope)">編輯</a>
         <a @click="delUserClick(scope)">刪除</a>
         </template>
@@ -48,7 +48,7 @@ import {RoleList} from "../../service/constant"
                 userList:[],
                 RowNum:0,
                 pageData:{
-                    Page:1,
+                    Page:0,
                     RowNum:20,
                     
                 }
@@ -114,6 +114,6 @@ this.$refs.addUserDialogRef.show(0)
 <style scoped>
 .top-wrapper{
     display:flex;
-    justy-content:flex-start;
+   justy-content:flex-start;
 }
 </style>

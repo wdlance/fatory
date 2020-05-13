@@ -17,7 +17,7 @@ instance.interceptors.request.use(
     
     if (token ) { // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers.authorization = token  //请求头加上token
-      config.data.Token = token
+      
     }
     return config
   },
@@ -28,20 +28,21 @@ instance.interceptors.request.use(
   // http response 拦截器
   instance.interceptors.response.use(
     response => {
+		
       if(response.status!=200){
         Vue.prototype.$message("请求失败，稍后重试")
       }
       //拦截响应，做统一处理 
-      if (response.data.code) {
-        switch (response.data.code) {
-          /* case 401:
-            store.state.isLogin = false
+      if (response.data.Ret) {
+        switch (response.data.Ret) {
+          case -8:
+
             router.replace({
               path: 'login',
               query: {
                 redirect: router.currentRoute.fullPath
               }
-            }) */
+            })
         }
       }
       return response

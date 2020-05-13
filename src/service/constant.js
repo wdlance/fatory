@@ -55,7 +55,7 @@ export const MenuList = [{
 		url:"/pack"
 	},{
 		id:62,
-		name:"订单状态",
+		name:"异常箱体维修",
 		url:"/exceptionBox"
 	}]
 },{
@@ -68,7 +68,7 @@ export const MenuList = [{
 	
 	children:[{
 		id:81,
-		name:"发货信息管理",
+		name:"品管",
 		url:"/qc"
 	},{
 		id:82,

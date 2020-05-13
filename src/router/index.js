@@ -49,6 +49,13 @@ const router = new Router({
 				auth:[4]
 			}
 		},{
+			path:"/assignSn",
+			name:"AssignSn",
+			component:resolve => require(['@/components/delivery/sn.vue'], resolve),
+			meta:{
+				auth:[4]
+			}
+		},{
 			path:"/prepare",
 			name:"Prepare",
 			component:resolve => require(['@/components/prepare/index.vue'], resolve),
@@ -127,7 +134,7 @@ const router = new Router({
 
 router.beforeEach ((to, from, next)=>{
 	
-	if(to.path == '/login'){
+	if(to.path == '/login'||to.path == "/"){
 		next()
 	}else{
 		let auth = localStorage.getItem("auth")
@@ -143,7 +150,13 @@ router.beforeEach ((to, from, next)=>{
 				
 			})
 			){
-				next()
+				let token = sessionStorage.getItem("token")
+				if(token){
+					next()
+				}else{
+					next("/login")
+				}
+			
 			}else{
 				next("/login")
 			}

@@ -98,7 +98,7 @@ this.getUserList()
 					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))
 					this.$router.push('/order')
 				}else if(this.searchForm.role==3){
-					localStorage.setItem("auth",JSON.stringify([2]))
+					localStorage.setItem("auth",JSON.stringify([2,3,4,5]))
 					this.$router.push('/order')
 				}else if(this.searchForm.role==4){
 					localStorage.setItem("auth",JSON.stringify([6]))
@@ -107,7 +107,7 @@ this.getUserList()
 					localStorage.setItem("auth",JSON.stringify([7]))
 					this.$router.push('/prepare')
 				}else if(this.searchForm.role==6){
-					localStorage.setItem("auth",JSON.stringify([8]))
+					localStorage.setItem("auth",JSON.stringify([8,3,4,5]))
 					this.$router.push('/choice')
 				}else{
 					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))

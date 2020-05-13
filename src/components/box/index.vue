@@ -19,7 +19,7 @@
       :data="tableData"
       style="width:100%">
       <el-table-column
-        prop="num"
+        prop="OrderID"
         label="订单序号"
         width="180">
       </el-table-column>
@@ -63,14 +63,14 @@ export default{
             tableData:[],
             RowNum:0,
             pageData:{
-                Page:1,
+                Page:0,
                 RowNum:20
             }
         }
     },
     created(){
       
-       this.searchForm.orderId = this.$route.query.orderId
+       this.searchForm.orderId = this.$route.query.orderId?this.$route.query.orderId:""
         this.getBoxList()
     },
     methods:{
@@ -109,7 +109,7 @@ export default{
 <style scoped>
 .search-wrapper{
 display:flex;
-justy-content:space-between;
+justy-content:flex-start;
 flex-wrap:wrap;
 }
 
@@ -123,7 +123,7 @@ flex-wrap:wrap;
     align-items:center;
     padding:0 15px;
     box-sizing:border-box;
-    width:50%;
+  min-width:33%;
     margin-bottom:15px;
 }
 </style>
