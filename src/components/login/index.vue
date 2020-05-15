@@ -1,5 +1,6 @@
 <template>
 	<div class="page-container">
+		<h1> 聚力得生产计划出入库系统</h1>
 		<el-form ref="loginFormRef" label-width="100px">
 		  <el-form-item
 		    label="角色"
@@ -105,10 +106,10 @@ this.getUserList()
 					this.$router.push('/pack')
 				}else if(this.searchForm.role==5){
 					localStorage.setItem("auth",JSON.stringify([7]))
-					this.$router.push('/prepare')
+					this.$router.push('/choice')
 				}else if(this.searchForm.role==6){
 					localStorage.setItem("auth",JSON.stringify([8,3,4,5]))
-					this.$router.push('/choice')
+					this.$router.push('/qc')
 				}else{
 					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))
 					this.$router.push('/order')
@@ -125,15 +126,23 @@ this.getUserList()
 
 
 <style scoped="scoped">
+	h1{
+		margin-top: 150px;
+	}
 	.page-container{
 		width: 100vw;
 		height: 100vh;
 		display: flex;
-		justify-content: center;
-		align-items: center;
+		
+		flex-direction:column;
+		align-items:center;
 	}
 	.el-form{
 		width:500px;
+		flex:1;
+		display: flex;
+		flex-direction :column;
+		justify-content: center;
 	}
 	.el-select{
 		width:100%;

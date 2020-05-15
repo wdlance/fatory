@@ -3,9 +3,21 @@
 <div class="search-wrapper">
 
 <div class="block">
-<div class="label">订单序号</div>
-    <el-input v-model="searchForm.boxNum"></el-input>
+<div class="label">订单号</div>
+    <el-input v-model="searchForm.orderId"></el-input>
   </div>
+	<div class="block">
+	<div class="label" v-if="$route.path=='/choice'">仓库备货状态</div>
+		<div class="label" v-else>品管状态</div>
+	<el-select v-model="searchForm.status" placeholder="请选择">
+	    <el-option
+	      v-for="item in status"
+	      :key="item.id"
+	      :label="item.name"
+	      :value="item.id">
+	    </el-option>
+	  </el-select>
+	</div>
   <div class="block">
   <el-button type="primary" @click="searchClick">查询</el-button>
   <el-button type="primary" @click="resetClick">重置</el-button>
@@ -16,7 +28,7 @@
       style="width:100%">
       <el-table-column
         prop="OrderID"
-        label="订单序号"
+        label="订单号"
        >
       </el-table-column>
       <el-table-column
@@ -39,8 +51,15 @@
        >
       </el-table-column>
       <el-table-column
-        prop="RecipientAddress"
-        label="发货SN号段及箱号">
+        prop="SnBox"
+        label="发货SN号段及箱号"
+				width="240">
+				<template slot-scope="scope" v-if="scope.row.SnBox!=''">
+				<div v-for="(item,index) in scope.row.SnBox" :key="index">
+				<div>{{item.SnStart}}至{{item.SnEnd}}</div>
+				  <div>{{item.BoxStart}}~{{item.BoxEnd}}号箱</div>
+				  </div>
+				</template>
       </el-table-column>
        <el-table-column
         prop="CreateTime"
@@ -49,7 +68,7 @@
       </el-table-column>
       <el-table-column
         prop="StatusPrepare"
-        label="备货状态"
+        :label="path=='/choice'?'备货状态':'品管状态'"
         >
         <template slot-scope="scope">
         <div v-if="scope.row.StatusPrepare==0">无</div>
@@ -62,6 +81,7 @@
         prop="address"
         label="操作">
            <template slot-scope="scope">
+			
            <template v-if="path=='/choice'">  
            <a @click="confirmTypeByEyes(scope.row)">目测备货</a>
       <a @click="gotoPrepare(scope.row)">扫码备货</a>
@@ -88,15 +108,30 @@
 </template>
 <script>
 import {RECIPIENT_API_PATH} from "../../service/api"
+let StatusDefinite = [{
+    id:0,
+    name:"无"
+},{
+    id:1,
+    name:"正确"
+},{
+    id:2,
+    name:"异常"
+},{
+    id:3,
+    name:"进行中"
+}]
 export default{
     data(){
         return{
+					status:StatusDefinite,
             searchForm:{
-                orderId:""
+                orderId:"",
+								status:0
             },
             RowNum:0,
             pageData:{
-              Page:0,
+              Page:1,
               RowNum:20
             },
             tableData:[],
@@ -106,7 +141,19 @@ export default{
     created(){
       this.path = this.$route.path
       this.getRecipientList()
+	 
     },
+	watch: {
+	  $route: {
+	    handler: function(val, oldVal){
+	      this.getRecipientList()
+		  this.path = this.$route.path
+		   
+	    },
+	    // 深度观察监听
+	    deep: true
+	  }
+	},
     methods:{
         handleCurrentChange(){
           this.getRecipientList()
@@ -115,11 +162,23 @@ export default{
     let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetRecipientList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
         formData.append("OrderID",this.searchForm.orderId)
+		if(this.$route.path == '/choice'){
+				formData.append("StatusPrepare",this.searchForm.status)
+		}else{
+					formData.append("StatusQc",this.searchForm.status)
+		}
+	
+	
         this.$axios.post(RECIPIENT_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
+						res.data.Data = res.data.Data?res.data.Data:[]
+			  res.data.Data.map(v=>{
+				  v.SnBox = v.SnBox&&v.SnBox!=""?JSON.parse(v.SnBox):""
+				  v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD HH:mm:ss")
+			  })
             this.tableData = res.data.Data
           }
         })
@@ -143,15 +202,15 @@ export default{
              formData.append("Token",sessionStorage.getItem("token"))
 			 if(this.path=='/choice'){
 				 formData.append("Act","SetStatusPrepareByExpressID")  
-				 formData.append("StatusPrepare","StatusPrepareOK")
+				
 			 }else{
 				 formData.append("Act","SetStatusQcByExpressID")
-				   formData.append("StatusQc","StatusQcOK")
+				
 			 }
              
              formData.append("ExpressID",item.ExpressID)
            
-             formData.append("ConfirmType","ConfirmTypeByEyes")
+             formData.append("ConfirmType",1)
              this.$axios.post(RECIPIENT_API_PATH,formData).then(res=>{
 				 if(res.data.Ret == 0){
 					 if(this.path=='/choice'){
@@ -187,7 +246,7 @@ justy-content:flex-start;
 }
 .label{
     flex-shrink:0;
-    width:100px;
+    width:140px;
 
 }
 .block{

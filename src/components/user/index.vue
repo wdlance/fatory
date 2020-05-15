@@ -20,7 +20,7 @@
               min-width="150"
 		        label="操作">
                 <template slot-scope="scope" v-if="scope.row.RoleID!=1">
-        <a @click="editUserClick(scope)">編輯</a>
+        <a @click="editUserClick(scope)">编辑</a>
         <a @click="delUserClick(scope)">刪除</a>
         </template>
 		      </el-table-column>
@@ -28,7 +28,7 @@
 
           <el-pagination
     
-
+   @current-change="handleCurrentChange"
       :current-page="pageData.Page"
       :page-size="pageData.RowNum"
       layout="total,pager, prev, next"
@@ -48,7 +48,7 @@ import {RoleList} from "../../service/constant"
                 userList:[],
                 RowNum:0,
                 pageData:{
-                    Page:0,
+                    Page:1,
                     RowNum:20,
                     
                 }
@@ -59,6 +59,9 @@ import {RoleList} from "../../service/constant"
            
         },
         methods:{
+			handleCurrentChange(){
+				this.getUserList()
+			},
             getUserList(){
                 let userInfo = localStorage.getItem("userInfo")
        
@@ -66,6 +69,8 @@ import {RoleList} from "../../service/constant"
                 
                 formData.append("Act","GetUserList")
                 formData.append("Token",sessionStorage.getItem("token"))
+				formData.append("Page",this.pageData.Page-1)
+				formData.append("RowNum",this.pageData.RowNum)
                 this.$axios.post(USER_API_PATH,formData).then(res=>{
                 
                     this.userList = res.data.Data.map(v=>{

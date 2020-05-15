@@ -54,6 +54,9 @@ export default {
 		color:#333;
 		cursor:pointer;
 	}
+	td a{
+		color:#3a8ee6;
+	}
 	.search-wrapper{
 		padding:20px 0px;
 	}

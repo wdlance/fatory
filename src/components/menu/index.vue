@@ -56,7 +56,11 @@ import {MenuList} from "../../service/constant"
 						break;
 					}
 				}
-				return menu?menu.id.toString():sub_menu?sub_menu.id.toString():this.menuList[0].id.toString()
+				
+				let selected_menu_path = localStorage.getItem("SELECTED_MENU")
+				let selected_menu_item = selected_menu_path?this.menuList.find(v=>v.url==selected_menu_path):this.menuList[0]
+				let selected_menu_id = selected_menu_item?selected_menu_item.id:this.menuList[0].id
+				return menu?menu.id.toString():sub_menu?sub_menu.id.toString():selected_menu_id.toString()
 			}
 		},
 		created(){
@@ -74,6 +78,7 @@ import {MenuList} from "../../service/constant"
 				if(!path){
 					return
 				}
+				localStorage.setItem("SELECTED_MENU",path)
 				this.$router.push(path)
 			}
 		}

@@ -75,7 +75,7 @@
       style="width:100%">
       <el-table-column
         prop="OrderID"
-        label="订单序号"
+        label="订单号"
         >
       </el-table-column>
       <el-table-column
@@ -85,15 +85,18 @@
       </el-table-column>
       <el-table-column
         prop="ProductTotal"
+		width="120"
         label="产品总数">
       </el-table-column>
       <el-table-column
         prop="NumberPerBox"
+		width="160"
         label="产品数/箱"
        >
       </el-table-column>
       <el-table-column
         prop="SnTotal"
+		width="120"
         label="SN总数"
         >
       	<template slot-scope="scope">
@@ -102,6 +105,7 @@
       </el-table-column>
       <el-table-column
         prop="BoxTotal"
+		width="120"
         label="总箱数">
         <template slot-scope="scope">
 				<a @click="toBoxListClick(scope.row)">{{scope.row.BoxTotal}}</a>
@@ -109,7 +113,8 @@
       </el-table-column>
        <el-table-column
         prop="RecipientTotal"
-        label="发货信息（收件人总数）"
+		width="120"
+        label="收件信息"
        >
        	<template slot-scope="scope">
 				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}</a>
@@ -158,9 +163,8 @@
    
     </el-table>
     
-         <el-pagination
-    
-
+         <el-pagination 
+		 @current-change="handleCurrentChange"
       :current-page="pageData.Page"
 	  :page-size ="pageData.RowNum"
       layout="total,pager, prev, next"
@@ -171,7 +175,7 @@
 import {ORDER_API_PATH,PRODUCT_API_PATH} from "../../service/api"
 let StatusDefinite = [{
     id:0,
-    name:"无"
+    name:"全部"
 },{
     id:1,
     name:"正确"
@@ -189,7 +193,7 @@ export default{
             searchForm:{
               	startTime:new Date(new Date().toLocaleDateString()),
 					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
-                productId:"",
+                productId:0,
                 status1:0,
                 status2:0,
                 status3:0
@@ -200,7 +204,7 @@ export default{
             tableData:[],
             RowNum:0,
             pageData:{
-              Page:0,
+              Page:1,
               RowNum:20
             }
         }
@@ -269,12 +273,15 @@ this.$router.push({
 				 this.getOrderList()
 			})
 			},
+			handleCurrentChange(){
+			  this.getOrderList()
+			},
           getOrderList(){
 				let formData = new FormData()
 				formData.append("Act","GetOrderList")
 				formData.append("Token",sessionStorage.getItem("token"))
 				formData.append("ProductID",this.searchForm.productId)
-					formData.append("Page",this.pageData.Page)
+					formData.append("Page",this.pageData.Page-1)
 			formData.append("RowNum",this.pageData.RowNum)
 							formData.append("StartTime",this.searchForm.startTime/1000)
 			formData.append("EndTime",this.searchForm.endTime/1000)
@@ -284,10 +291,12 @@ this.$router.push({
 				this.$axios.post(ORDER_API_PATH,formData).then(res=>{
 					
 					if(res.data.Ret == 0){
+						res.data.Data = res.data.Data?res.data.Data:[]
 						let data = res.data.Data
+						
 						data = data.map(v=>{
 							let product = this.productList.find(item=>item.ProductID == v.ProductID)
-							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD hh:mm:ss')
+							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD HH:mm:ss')
 							v.ProductBriefName = product?product.ProductBriefName:""
 						
 							return v
@@ -322,7 +331,7 @@ flex-wrap:wrap;
 
 .label{
     flex-shrink:0;
-    width:80px;
+    width:150px;
 
 }
 .block{

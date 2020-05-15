@@ -7,7 +7,7 @@
      <el-form-item label="新密码" label-width="100">
       <el-input v-model="formData.new_password" autocomplete="off" type="password"></el-input>
     </el-form-item>
-     <el-form-item label="確認密码" label-width="100">
+     <el-form-item label="确认密码" label-width="100">
       <el-input v-model="formData.confirm_password" autocomplete="off" type="password"></el-input>
     </el-form-item>
   </el-form>
@@ -44,7 +44,7 @@ export default{
             let {new_password,confirm_password} = this.formData
             
             if(new_password!=confirm_password){
-                this.$message("兩次輸入的密碼不相同！")
+                this.$message("兩次輸入的密码不相同！")
                 return
             }
             let formData = new FormData()

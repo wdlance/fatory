@@ -3,7 +3,7 @@
 <div class="search-wrapper">
 
 <div class="block">
-<div class="label">订单序号</div>
+<div class="label">订单号</div>
 <el-input v-model="searchForm.orderId"></el-input>
 </div>
 <div class="block">
@@ -20,13 +20,13 @@
       style="width:100%">
       <el-table-column
         prop="OrderID"
-        label="订单序号"
-        width="180">
+        label="订单号"
+        >
       </el-table-column>
       <el-table-column
         prop="Box"
         label="箱号"
-        width="180">
+        >
       </el-table-column>
       <el-table-column
         prop="SnStart"
@@ -35,7 +35,7 @@
       <el-table-column
         prop="SnEnd"
         label="SN号终止"
-        width="180">
+       >
       </el-table-column>
     
      
@@ -63,7 +63,7 @@ export default{
             tableData:[],
             RowNum:0,
             pageData:{
-                Page:0,
+                Page:1,
                 RowNum:20
             }
         }
@@ -78,7 +78,7 @@ export default{
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetBoxList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
         formData.append("Box",this.searchForm.boxNum)
         formData.append("OrderID",this.searchForm.orderId)
@@ -86,7 +86,7 @@ export default{
        
         this.$axios.post(BOX_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
-            this.tableData = res.data.Data
+            this.tableData = res.data.Data?res.data.Data:[]
             this.RowNum = res.data.Recordcount
           }
         })

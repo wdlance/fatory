@@ -2,7 +2,7 @@
 <div class="page-container">
 <div class="search-wrapper">
 <div class="block">
-<div class="label">订单序号</div>
+<div class="label">订单号</div>
 <el-input v-model="searchForm.orderId"></el-input>
 </div>
 <div class="block">
@@ -23,7 +23,7 @@
       style="width:100%">
       <el-table-column
         prop="OrderID"
-        label="订单序号"
+        label="订单号"
         >
       </el-table-column>
       <el-table-column
@@ -54,10 +54,11 @@
       </el-table-column>
       <el-table-column
         prop="SnBox"
+				width="240"
         label="发货SN号段及箱号">
         <template slot-scope="scope" v-if="scope.row.SnBox!=''">
         <div v-for="(item,index) in scope.row.SnBox" :key="index">
-        <div>{{item.SnStart}}至{{item.SnStart}}</div>
+        <div>{{item.SnStart}}至{{item.SnEnd}}</div>
           <div>{{item.BoxStart}}~{{item.BoxEnd}}号箱</div>
           </div>
         </template>
@@ -98,7 +99,7 @@ export default{
             tableData:[],
             RowNum:0,
             pageData:{
-                Page:0,
+                Page:1,
                 RowNum:20,
           
             }
@@ -114,7 +115,7 @@ export default{
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetRecipientList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
        
         formData.append("OrderID",this.searchForm.orderId)
@@ -122,11 +123,17 @@ export default{
          formData.append("RecipientName",this.searchForm.recipientor)
         this.$axios.post(RECIPIENT_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
-            res.data.Data = res.data.Data.map(v=>{
-              
-              v.SnBox = v.SnBox&&v.SnBox!=''?JSON.parse(v.SnBox):""
-              return v
-            })
+						
+						if(res.data.Data){
+							res.data.Data = res.data.Data.map(v=>{
+							  	v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD HH:mm:ss')
+							  v.SnBox = v.SnBox&&v.SnBox!=''?JSON.parse(v.SnBox):""
+							  return v
+							})
+						}else{
+							res.data.Data = []
+						}
+          
             this.tableData = res.data.Data
             
             this.RowNum = res.data.Recordcount

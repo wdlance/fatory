@@ -1,7 +1,8 @@
 <template>
-<el-form label-position="right" label-width="160px">
+<el-form label-position="right" label-width="200px">
   <el-form-item label="每日自动备份时间">
-    <el-input v-model="backupTime"></el-input>
+    <el-input v-model="backupTime" @blur="changeBackupTime"></el-input>
+		 <div class="error" v-if="timeError">时间格式不正确，正确格式为00:00:00</div>
   </el-form-item>
   <el-form-item label="自动备份路径">
     <el-input v-model="backupPath"></el-input>
@@ -20,6 +21,7 @@ import {SYSTEM_API_PATH} from "../../service/api"
 export default{
   data(){
     return{
+			timeError:false,
       backupTime:"",
       backupPath:"",
       logClearTime:""
@@ -29,6 +31,22 @@ export default{
     this.getSystemInfo()
   },
   methods:{
+		changeBackupTime(){
+			 var reg = /^(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d$/;     //时间格式的正则表达式
+			
+			                     
+			
+			                if (!reg.test(this.backupTime)) {
+			
+			                    this.timeError = true
+			
+			                    
+			
+			                }else{
+				this.timeError = false
+			}
+	
+		},
     getSystemInfo(){
       let formData = new FormData()
       formData.append("Token",sessionStorage.getItem("token"))
@@ -44,6 +62,11 @@ export default{
       })
     },
     confirmClick(){
+		this.changeBackupTime()
+	if(this.timeError){
+		return
+	}
+	
       let formData = new FormData()
       formData.append("Token",sessionStorage.getItem("token"))
       formData.append("Act","SetSystem")
@@ -67,5 +90,13 @@ export default{
 <style scoped="script">
 .el-form-item{
   text-align:left;
+  margin-top: 30px;
+}
+.error{
+  
+  left:0px;
+  color:red;
+  top: 100%;
+  margin-top: 10px;
 }
 </style>

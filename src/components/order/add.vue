@@ -1,10 +1,10 @@
 <template>
-<el-dialog title="" :visible.sync="dialogFormVisible">
+<el-dialog label-position="right" :visible.sync="dialogFormVisible"  label-width="140">
   <el-form :model="formData">
-   <el-form-item label="订单号" label-width="100">
+   <el-form-item label="订单号">
       <el-input v-model="formData.orderId" autocomplete="off"></el-input>
     </el-form-item>
-      <el-form-item label="产品简称" label-width="100">
+      <el-form-item label="产品简称">
       <el-select v-model="formData.productId" placeholder="请选择">
   <el-option
       v-for="(item,index) in productList"
@@ -25,10 +25,10 @@
     <el-button type="primary" @click="addProductNameClick">+新增</el-button>
     </el-form-item>
     
-     <el-form-item label="产品总数" label-width="100">
+     <el-form-item label="产品总数">
       <el-input v-model="formData.productTotalNum" autocomplete="off" type="number"></el-input>
     </el-form-item>
-      <el-form-item label="产品数/每箱" label-width="100">
+      <el-form-item label="产品数/每箱">
       <el-input v-model="formData.productNumberInPerBox" autocomplete="off" type="number"></el-input>
     </el-form-item>
   </el-form>
@@ -88,7 +88,9 @@ export default{
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
                     this.productList = res.data.Data
-                }
+                }else{
+					this.$message(res.data.Msg)
+				}
             })
         },
         addProductNameClick(){
@@ -111,7 +113,9 @@ export default{
                 if(res.data.Ret==0){
                     this.$message("产品添加成功")
                      this.productNames.push(res.value)
-                }
+                }else{
+					this.$message(res.data.Msg)
+				}
             })
            
         }).finally(()=>{
@@ -141,7 +145,9 @@ export default{
                     this.$message("订单创建成功")
                     this.dialogFormVisible = false
 
-                }
+                }else{
+					this.$message(res.data.Msg)
+				}
             }).finally(()=>{
                 this.hasClick = false
             })
@@ -162,7 +168,9 @@ export default{
                     this.$message("刪除产品成功")
                     this.productList.splice(index,1)
                     this.getProductList()
-                }
+                }else{
+					this.$message(res.data.Msg)
+				}
             }).finally(()=>{
                 this.hasClick = false
             })
@@ -170,7 +178,7 @@ export default{
     }
 }
 </script>
-<style>
+<style scoped="scoped">
 .el-form-item{
 display:flex;
 align-items:center;
@@ -188,7 +196,7 @@ justy-content:space-between;
     flex:1;
 }
 .el-form-item__label{
-    width:120px;
+    width:140px;
     text-align:right;
 }
 .el-select-dropdown__item{

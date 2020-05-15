@@ -1,7 +1,7 @@
 <template>
 <div class="page-container">
 <el-form label-position="right" label-width="120px" :model="formData">
-  <el-form-item label="订单序号">
+  <el-form-item label="订单号">
     <el-input v-model="formData.orderId" ref="boxNumRef" placeholder="" readonly></el-input>
   </el-form-item>
     <el-form-item label="客户名称">
@@ -13,11 +13,11 @@
 
  <div style="display:flex;align-items:center;">
  <div style="flex:1">
-  <template v-for="item in formData.snBox">
-  <el-form-item label="SN号起始">
+  <template v-for="(item,index) in formData.snBox">
+  <el-form-item label="SN号起始"  :key="index">
     <el-input v-model="item.SnStart"></el-input>
   </el-form-item>
-  <el-form-item label="SN号终止">
+  <el-form-item label="SN号终止"  :key="index">
     <el-input v-model="item.SnEnd"></el-input>
   </el-form-item>
    </template>

@@ -62,14 +62,7 @@ const router = new Router({
 			meta:{
 				auth:[7,8]
 			}
-		},{
-				path:"/",
-				name:"Choice",
-				component:resolve => require(['@/components/choice/index.vue'], resolve),
-				meta:{
-					auth:[8]
-				}
-			},
+		},
 			{
 				path:"/pack",
 				name:"Pack",
@@ -86,7 +79,7 @@ const router = new Router({
 				name:"Choice",
 				component:resolve => require(['@/components/choice/index.vue'], resolve),
 				meta:{
-					auth:[8]
+					auth:[7]
 				}
 			},
 			{
@@ -94,7 +87,7 @@ const router = new Router({
 				name:"Qc",
 				component:resolve => require(['@/components/choice/index.vue'], resolve),
 				meta:{
-					auth:[8]
+					auth:[3,4,5,8]
 				}
 			},{
 				path:"/orderStatus",

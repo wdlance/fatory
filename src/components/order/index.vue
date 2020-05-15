@@ -47,27 +47,27 @@
 		      <el-table-column
 		        prop="OrderID"
 		        label="订单号"
-		        width="180">
+		       >
 		      </el-table-column>
 		      <el-table-column
 		        prop="ProductBriefName"
 		        label="产品简称"
-		        width="180">
+		        >
 		      </el-table-column>
 			   <el-table-column
 		        prop="ProductTotal"
 		        label="产品总数"
-		        width="180">
+		        width="120">
 		      </el-table-column>
 		      <el-table-column
 		        prop="NumberPerBox"
 		        label="产品数/箱"
-		        width="180">
+		        width="120">
 		      </el-table-column>
 			   <el-table-column
 		       prop="SnTotal"
 		        label="SN总数"
-		        width="180">
+		        width="100">
 				<template slot-scope="scope">
 				<a @click="toSnListClick(scope.row)">{{scope.row.SnTotal}}</a>
 				</template>
@@ -75,7 +75,7 @@
 		      <el-table-column
 		        prop="BoxTotal"
 		        label="总箱数"
-		        width="180">
+		        width="90">
 	<template slot-scope="scope">
 				<a @click="toBoxListClick(scope.row)">{{scope.row.BoxTotal}}</a>
 				</template>
@@ -83,8 +83,8 @@
 		      </el-table-column>
 		      <el-table-column
 		        prop="RecipientTotal"
-		        label="发货信息（收件人总数）"
-		        width="180">
+		        label="收件信息"
+		        width="120">
 				<template slot-scope="scope">
 				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}</a>
 				</template>
@@ -92,12 +92,12 @@
 			   <el-table-column
 		        prop="CreateTime"
 		        label="创建时间"
-		        width="180">
+		        >
 		      </el-table-column>
 		      <el-table-column
 		        prop="role"
 		        label="导入数据"
-		        width="180">
+		        >
 				<template slot-scope="scope">
 				<div>
 				<a>
@@ -128,7 +128,7 @@
 			   <el-table-column
 		        prop="role"
 		        label="导出数据"
-		        width="180">
+		        >
 				 <template slot-scope="scope">
 				 <div>
 				 <a :href="scope.row.href1">
@@ -160,8 +160,8 @@
 		    </el-table>
 
          <el-pagination
-    
-
+		 
+		 @current-change="handleCurrentChange"
       :current-page="pageData.Page"
 	  :page-size ="pageData.RowNum"
       layout="total,pager, prev, next"
@@ -186,7 +186,7 @@ import AddOrderDialog from "./add"
 					productId:0
 				},
 				pageData:{
-					Page:0,
+					Page:1,
 					RowNum:20
 				}
 			}
@@ -327,12 +327,15 @@ this.$router.push({
 				 this.getOrderList()
 			})
 			},
+			handleCurrentChange(){
+			  this.getOrderList()
+			},
             getOrderList(){
 				let formData = new FormData()
 				formData.append("Act","GetOrderList")
 				formData.append("Token",sessionStorage.getItem("token"))
 				formData.append("ProductID",this.searchForm.productId)
-					formData.append("Page",this.pageData.Page)
+					formData.append("Page",this.pageData.Page-1)
 			formData.append("RowNum",this.pageData.RowNum)
 							formData.append("StartTime",this.searchForm.startTime/1000)
 			formData.append("EndTime",this.searchForm.endTime/1000)
@@ -340,18 +343,21 @@ this.$router.push({
 					
 					if(res.data.Ret == 0){
 						let data = res.data.Data
-						if(!data){
-							return
+						
+						if(data){
+							data = data.map(v=>{
+								let product = this.productList.find(item=>item.ProductID == v.ProductID)
+								v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD HH:mm:ss')
+								v.ProductBriefName = product?product.ProductBriefName:""
+								v.href1 = DOWNLOAD_KUAYUEEXPRESS_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+								v.href2 = DOWNLOAD_HANDOVER_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+								v.href3 = DOWNLOAD_DISTRIBUTE_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+								return v
+							})
+						}else{
+							data = []
 						}
-						data = data.map(v=>{
-							let product = this.productList.find(item=>item.ProductID == v.ProductID)
-							v.CreateTime = this.moment(new Date(v.CreateTime*1000)).format('YYYY-MM-DD hh:mm:ss')
-							v.ProductBriefName = product?product.ProductBriefName:""
-							v.href1 = DOWNLOAD_KUAYUEEXPRESS_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
-							v.href2 = DOWNLOAD_HANDOVER_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
-							v.href3 = DOWNLOAD_DISTRIBUTE_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
-							return v
-						})
+						
 						this.orderList = data
 						this.RowNum = res.data.Recordcount
 						
@@ -385,6 +391,7 @@ this.$router.push({
 			formData.append("Token",sessionStorage.getItem("token"))
 			formData.append("OrderID",scope.row.OrderID)
 			this.$axios.post(ORDER_API_PATH,formData).then(res=>{
+				
 				if(res.data.Ret == 0){
 					this.$message("刪除订单成功")
 					this.productList.splice(scope.$index,1)
@@ -407,7 +414,7 @@ this.$router.push({
 	justy-content:flex-start;
 }
 .block{
-	  min-width:33%;
+
 	padding:15px;
 	box-sizing:border-box;
 	display:flex;
@@ -415,7 +422,7 @@ this.$router.push({
 	align-items:center;
 }
 .label-text{
-	width:100px;
+	min-width:120px;
 }
 .operate{
 	//display:flex;

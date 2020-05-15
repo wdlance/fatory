@@ -28,8 +28,8 @@
  <el-input v-model="searchForm.content"></el-input>
 </div>
   <div class="operate">
-   <el-button type="primary" @click="searchClick">+查詢</el-button>
-    <el-button type="primary" @click="resetClick">+重置</el-button>
+   <el-button type="primary" @click="searchClick">查询</el-button>
+    <el-button type="primary" @click="resetClick">重置</el-button>
   </div>
 </div>
 <el-table
@@ -80,7 +80,7 @@ export default{
             },
             RowNum:0,
             pageData:{
-             Page:0,
+             Page:1,
              RowNum:20
             }
         }
@@ -93,7 +93,7 @@ export default{
         let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetLogList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
        let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
         let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 00:00:00")
@@ -103,8 +103,9 @@ export default{
         formData.append("Content",this.searchForm.content)
         this.$axios.post(LOG_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
+						res.data.Data = res.data.Data?res.data.Data:[]
             res.data.Data.map(v=>{
-              v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD hh:mm")
+              v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD HH:mm:ss")
               v.RoleName = RoleList.find(role=>role.id == v.RoleID)?RoleList.find(role=>role.id == v.RoleID).name:""
             })
             this.tableData = res.data.Data

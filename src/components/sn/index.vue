@@ -2,7 +2,7 @@
 <div class="page-container">
 <div class="search-wrapper">
 <div class="block">
-<div class="label">订单序号</div>
+<div class="label">订单号</div>
 <el-input v-model="searchForm.orderId"></el-input>
 </div>
 <div class="block">
@@ -38,7 +38,7 @@
       style="width:100%">
       <el-table-column
         prop="OrderID"
-        label="订单序号"
+        label="订单号"
        >
       </el-table-column>
       <el-table-column
@@ -63,8 +63,8 @@
        
     </el-table>
        <el-pagination
-    
-
+	   
+	   @current-change="handleCurrentChange"
       :current-page="pageData.Page"
 	  :page-size ="pageData.RowNumS"
       layout="total,pager, prev, next"
@@ -87,7 +87,7 @@ export default{
             tableData:[],
             RowNum:0,
             pageData:{
-              Page:0,
+              Page:1,
               RowNum:20
             }
         }
@@ -105,23 +105,31 @@ export default{
         this.getSnList()
     },
     methods:{
+		handleCurrentChange(){
+			this.getSnList()
+		},
         getSnList(){
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetSnList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
         let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
         let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 00:00:00")
         formData.append("StartTime",new Date(startTime).getTime()/1000)
         formData.append("EndTime",new Date(endTime).getTime()/1000)
         formData.append("OrderID",this.searchForm.orderId)
-       
+       formData.append("Sn",this.searchForm.sn)
         this.$axios.post(SN_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
-            res.data.Data.map(v=>{
-              v.CreateTime = this.moment((v.CreateTime*1000)).format("YYYY-MM-DD hh:mm:ss")
-            })
+			  if(res.data.Data){
+				  res.data.Data.map(v=>{
+				    v.CreateTime = this.moment((v.CreateTime*1000)).format("YYYY-MM-DD HH:mm:ss")
+				  })
+			  }else{
+				  res.data.Data = []
+			  }
+           
             this.tableData = res.data.Data
             this.RowNum = res.data.Recordcount
           }
@@ -159,7 +167,7 @@ flex-wrap:wrap;
 
 .label{
     flex-shrink:0;
-    width:80px;
+    width:120px;
 
 }
 .block{

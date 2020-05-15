@@ -3,7 +3,7 @@
 <div class="search-wrapper">
 
 <div class="block">
-<div class="label">订单序号</div>
+<div class="label">订单号</div>
     <el-input v-model="searchForm.orderId"></el-input>
   </div>
   <div class="block">
@@ -67,7 +67,7 @@ export default{
             },
             RowNum:0,
             pageData:{
-              Page:0,
+              Page:1,
               RowNum:20
             },
             tableData:[]
@@ -81,16 +81,17 @@ export default{
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetBoxList")
-        formData.append("Page",this.pageData.Page)
+        formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
         formData.append("Box",this.searchForm.boxNum)
         formData.append("OrderID",this.searchForm.orderId)
-        formData.append("StatusBox","StatusBoxException")
+        formData.append("StatusBox",2)
    
         this.$axios.post(BOX_API_PATH,formData).then(res=>{
           if(res.data.Ret == 0){
+						res.data.Data = res.data.Data?res.data.Data:[]
             res.data.Data.map(v=>{
-              v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD hh:mm:ss")
+              v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD HH:mm:ss")
             })
             this.tableData = res.data.Data
             this.RowNum = res.data.Recordcount
