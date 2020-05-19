@@ -5,7 +5,7 @@
 	</div>
     <div class="search-wrapper">
 	 <div class="block">
-    <span class="label-text">开始时间</span>
+    <span class="label">开始时间</span>
     <el-date-picker
       v-model="searchForm.startTime"
       type="date"
@@ -14,7 +14,7 @@
     </el-date-picker>
   </div>
    <div class="block">
-    <span class="label-text">结束时间</span>
+    <span class="label">结束时间</span>
     <el-date-picker
       v-model="searchForm.endTime"
       type="date"
@@ -23,7 +23,7 @@
     </el-date-picker>
   </div>
    <div class="block">
-    <span class="label-text">产品简称</span>
+    <span class="label">产品简称</span>
    <el-select v-model="searchForm.productId" placeholder="请选择">
     <el-option
       v-for="item in productList"
@@ -34,7 +34,7 @@
     </el-option>
   </el-select>
   </div>
-  <div class="operate">
+  <div class="operates">
    <el-button type="primary" @click="searchClick">查询</el-button>
     <el-button type="primary" @click="resetClick">重置</el-button>
   </div>
@@ -269,10 +269,21 @@ import AddOrderDialog from "./add"
 			this.$axios.post(url,formData).then(res=>{
 				
 				if(res.data.Ret == 0){
-					this.$message("成功导入"+res.data.Data+"条数据")
+					
+					
+					this.$message({
+						message:"成功导入"+res.data.Data+"条数据",
+						type:"success",
+						duration:3000
+					});
 					this.getOrderList()
 				}else{
-					this.$message(res.data.Msg)
+					
+					this.$message({
+						message:res.data.Msg,
+						type:"error",
+						duration:3000
+					});
 				}
 			}).finally(()=>{
 				e.target.value = ""
@@ -393,7 +404,12 @@ this.$router.push({
 			this.$axios.post(ORDER_API_PATH,formData).then(res=>{
 				
 				if(res.data.Ret == 0){
-					this.$message("刪除订单成功")
+				
+					this.$message({
+						message:"删除订单成功",
+						type:"success",
+						duration:3000
+					});
 					this.productList.splice(scope.$index,1)
 					this.getOrderList()
 				}
@@ -413,19 +429,13 @@ this.$router.push({
 	padding:15px;
 	justy-content:flex-start;
 }
-.block{
 
-	padding:15px;
-	box-sizing:border-box;
-	display:flex;
-	justy-content:flex-start;
-	align-items:center;
-}
 .label-text{
 	min-width:120px;
 }
 .operate{
-	//display:flex;
+	display:flex;
+	align-items: center;
 }
 .add-wrapper{
 	display:flex;

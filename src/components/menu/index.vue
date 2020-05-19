@@ -79,6 +79,7 @@ import {MenuList} from "../../service/constant"
 					return
 				}
 				localStorage.setItem("SELECTED_MENU",path)
+				this.$emit("closeMenu")
 				this.$router.push(path)
 			}
 		}

@@ -78,7 +78,11 @@ export default{
                 this.$message("用戶添加成功")
                 this.$emit("getUserList")
             }else{
-                this.$message(res.data.Msg)
+                this.$message({
+                	message:res.data.Msg,
+                	type:"error",
+                	duration:3000
+                });
             }
         })
     }

@@ -13,7 +13,7 @@
 <div class="label">快运单号</div>
 <el-input v-model="searchForm.expressId"></el-input>
 </div>
- <div class="block">
+ <div class="operates">
   <el-button type="primary" @click="searchClick">查询</el-button>
   <el-button type="primary" @click="resetClick">重置</el-button>
 </div>
@@ -137,7 +137,13 @@ export default{
             this.tableData = res.data.Data
             
             this.RowNum = res.data.Recordcount
-          }
+          }else{
+						this.$message({
+							message:res.data.Msg,
+							type:"error",
+							duration:3000
+						});
+					}
         })
         },
         resetClick(){
@@ -176,17 +182,5 @@ justy-content:flex-start;
 flex-wrap:wrap;
 }
 
-.label{
-    flex-shrink:0;
-    width:100px;
 
-}
-.block{
-    display:flex;
-    align-items:center;
-    padding:0 15px;
-    box-sizing:border-box;
-  min-width:33%;
-    margin-bottom:15px;
-}
 </style>

@@ -27,7 +27,7 @@
 <div class="label">内容</div>
  <el-input v-model="searchForm.content"></el-input>
 </div>
-  <div class="operate">
+  <div class="operates">
    <el-button type="primary" @click="searchClick">查询</el-button>
     <el-button type="primary" @click="resetClick">重置</el-button>
   </div>
@@ -111,7 +111,12 @@ export default{
             this.tableData = res.data.Data
             this.RowNum = res.data.Recordcount
           }else{
-            this.$message(res.data.Msg)
+         
+						this.$message({
+							message:res.data.Msg,
+							type:"error",
+							duration:3000
+						});
           }
         })
       },
@@ -138,17 +143,5 @@ export default{
     flex-wrap:wrap;
 		justy-content:flex-start;
 }
-.block{
-    width:50%;
-    padding:15px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    justy-content:flex-start;
-}
-.label{
-    min-width:100px;
-    text-align:right;
-    margin-right:10px;
-}
+
 </style>

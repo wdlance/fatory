@@ -1,21 +1,30 @@
 <template>
 	<div class="page-container">
-		<el-form label-position="right" label-width="120px" :model="formData">
+		<el-form label-position="right" label-width="160px">
 			<div style="margin-bottom: 20px;">第{{ currentNum }}/{{ totalNum }}箱</div>
-			<el-form-item label="快运单号">
-				<el-input v-model="formData.expressId" ref="expressIdRef" placeholder="请扫描快运单号" @focus="focusInput('expressId')"></el-input>
-			</el-form-item>
-			<el-form-item label="SN号起始">
-				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始" @focus="focusInput('snStart')"></el-input>
-			</el-form-item>
-			<el-form-item label="SN号终止"><el-input v-model="formData.snEnd" ref="snEndRef" placeholder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input></el-form-item>
-			<el-form-item label="箱号">
-				<el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @focus="focusInput('boxNum')"></el-input>
+			<div class="form-group">
+				<div class="label">快运单号</div>
+				<el-input v-model="formData.expressId" ref="expressIdRef" placeholder="请扫描快运单号" @input="changeInput" @focus="focusInput('expressId')"></el-input>
+			</div>
+			<div class="form-group">
+				<div class="label">SN号起始</div>
+				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始"@input="changeInput"  @focus="focusInput('snStart')"></el-input>
+			</div>
+			<div class="form-group">
+				<div class="label">SN号终止</div>
+				<el-input v-model="formData.snEnd" ref="snEndRef" @input="changeInput" placeolder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input></div>
+			<div class="form-group">
+				<div class="label">箱号</div>
+				<el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @input="changeInput" @focus="focusInput('boxNum')"></el-input>
 				<div class="box-right" src="../../assets/right.png" v-if="boxChecked && boxRight"></div>
 				<div class="box-error" src="../../assets/error.png" v-if="boxChecked && !boxRight"></div>
-				<div class="error" v-if="boxChecked && !boxRight">快运单号 {{ formData.expressId }} 和箱号 {{ formData.boxNum }} 不匹配</div>
-			</el-form-item>
-			<el-button type="primary" style="margin-top:50px;" @click="confirmTypeByScan">强制确认</el-button>
+				<div class="error" v-if="boxChecked && !boxRight">快运单号 {{ formData.expressId }} 和箱号 {{ box }} 不匹配</div>
+			
+			</div>
+			<div class="operates">
+				<el-button type="primary" style="margin-top:50px;" @click="confirmTypeByScan">强制确认</el-button>
+			</div>
+			
 		</el-form>
 	</div>
 </template>
@@ -44,6 +53,8 @@ export default {
 			errorBoxList: [],
 			snOkList: [],
 			ksnOkList: [],
+			box:"",
+			hasEnter:false,
 			formData: {
 				boxNum: '',
 				snStart: '',
@@ -57,34 +68,9 @@ export default {
 		console.log('path=' + this.path);
 		document.body.onkeydown = e => {
 			if (e.keyCode == 13) {
-				if (this.focus == 'expressId') {
-					this.focus = 'snStart';
-					this.$refs.snStartRef.focus();
-					this.getBoxListByExpressID(this.snStart);
-				} else if (this.focus == 'snStart') {
-					this.checkSnStart();
-					this.focus = 'snEnd';
-					this.$refs.snEndRef.focus();
-					this.boxChecked = false;
-				} else if (this.focus == 'snEnd') {
-					this.checkSnEnd();
-					this.focus = 'boxNum';
-					this.$refs.boxNumRef.focus();
-				} else if (this.focus == 'boxNum') {
-					this.checkBox();
-					console.log('currentNum=' + this.currentNum);
-					if (this.currentNum < this.totalNum) {
-						this.focus = 'snStart';
-						this.$refs.snStartRef.focus();
-						this.formData.snStart = '';
-						this.formData.snEnd = '';
-						this.formData.boxNum = '';
-					} else {
-						this.confirmTypeByScan();
-					}
-				}
+				this.enterInput()
 			} else if (e.keyCode == 86) {
-				this.formData.boxNum = '';
+				
 			}
 		};
 		this.$nextTick(() => {
@@ -92,11 +78,56 @@ export default {
 		});
 	},
 	methods: {
+		changeInput(){
+		
+				this.hasEnter = false
+				console.log("ctrl+v")
+				setTimeout(()=>{
+					
+					if(!this.hasEnter){
+						
+						console.log("程序自动enter")
+							this.enterInput()
+					}
+				
+				},1000)
+			},
+		enterInput(){
+			this.hasEnter = true
+			if (this.focus == 'expressId') {
+				this.focus = 'snStart';
+				this.$refs.snStartRef.focus();
+				this.getBoxListByExpressID(this.snStart);
+			} else if (this.focus == 'snStart') {
+				this.checkSnStart();
+				this.focus = 'snEnd';
+				this.$refs.snEndRef.focus();
+				this.boxChecked = false;
+			} else if (this.focus == 'snEnd') {
+				this.checkSnEnd();
+				this.focus = 'boxNum';
+				this.$refs.boxNumRef.focus();
+			} else if (this.focus == 'boxNum') {
+				this.checkBox();
+				
+				console.log('currentNum=' + this.currentNum);
+				if (this.currentNum < this.totalNum) {
+					this.focus = 'snStart';
+					this.$refs.snStartRef.focus();
+					this.formData.snStart = '';
+					this.formData.snEnd = '';
+					this.formData.boxNum = '';
+				} else {
+					this.confirmTypeByScan();
+				}
+			}
+		},
 		focusInput(str) {
 			this.focus = str;
 		},
 		checkBox() {
 			this.boxChecked = true;
+			this.box = this.formData.boxNum
 			if (this.snList.find(v => v.Box == this.formData.boxNum)) {
 				this.boxRight = true;
 				if (this.snOkList[this.currentNum]) {
@@ -113,16 +144,16 @@ export default {
 			} else {
 				if (this.ksnList.find(v => v.Box == this.formData.boxNum)) {
 					this.boxRight = true;
-					if (this.ksnList[this.currentNum]) {
-						Object.assign(this.ksnList[this.currentNum], {
+					if (this.ksnOkList[this.currentNum]) {
+						Object.assign(this.ksnOkList[this.currentNum], {
 							Box: this.formData.boxNum
 						});
 					} else {
-						this.ksnList[this.currentNum] = {
+						this.ksnOkList[this.currentNum] = {
 							Box: this.formData.boxNum
 						};
 					}
-					this.currentNum = this.ksnList.length;
+					this.currentNum = this.ksnOkList.length;
 					return true;
 				} else {
 					this.boxRight = false;
@@ -130,8 +161,8 @@ export default {
 					if (this.snOkList[this.currentNum]) {
 						this.snOkList.splice(this.currentNum, 1);
 					}
-					if (this.ksnList[this.currentNum]) {
-						this.ksnList.splice(this.currentNum, 1);
+					if (this.ksnOkList[this.currentNum]) {
+						this.ksnOkList.splice(this.currentNum, 1);
 					}
 					return false;
 				}
@@ -166,7 +197,10 @@ export default {
 					return true;
 				} else {
 					this.hasError = true;
-					this.$message('Sn号起始与快运单号不匹配');
+					this.$message({
+						type:'error',
+						message:'Sn号起始与快运单号不匹配'
+					});
 					if (this.snOkList[this.currentNum]) {
 						this.snOkList.splice(this.currentNum, 1);
 					}
@@ -193,24 +227,27 @@ export default {
 				return true;
 			} else {
 				if (this.ksnList.find(v => v.SnEnd == this.formData.snEnd)) {
-					if (this.ksnList[this.currentNum]) {
-						Object.assign(this.ksnList[this.currentNum], {
+					if (this.ksnOkList[this.currentNum]) {
+						Object.assign(this.ksnOkList[this.currentNum], {
 							SnEnd: this.formData.snEnd
 						});
 					} else {
-						this.ksnList[this.currentNum] = {
+						this.ksnOkList[this.currentNum] = {
 							SnEnd: this.formData.snEnd
 						};
 					}
 					return true;
 				} else {
 					this.hasError = true;
-					this.$message('Sn号终止与快运单号不匹配');
+					this.$message({
+						message:'Sn号终止与快运单号不匹配',
+						type:"error"
+					});
 					if (this.snOkList[this.currentNum]) {
 						this.snOkList.splice(this.currentNum, 1);
 					}
-					if (this.ksnList[this.currentNum]) {
-						this.ksnList.splice(this.currentNum, 1);
+					if (this.ksnOkList[this.currentNum]) {
+						this.ksnOkList.splice(this.currentNum, 1);
 					}
 					return false;
 				}
@@ -236,8 +273,17 @@ export default {
 					.post(RECIPIENT_API_PATH, formData)
 					.then(res => {
 						if (res.data.Ret == 0) {
+							this.$message({
+								type:"success",
+								message:"整单正确",
+								duration:3000
+							})
 						} else {
-							this.$message(res.data.Msg);
+							this.$message({
+								message:res.data.Msg,
+								type:"error",
+								duration:3000
+							});
 						}
 					})
 					.finally(() => {
@@ -249,6 +295,7 @@ export default {
 							snEnd: '',
 							expressId: ''
 						};
+						this.box = ""
 						this.totalNum = 0;
 						this.currentNum = 0;
 						this.boxChecked = false;
@@ -267,7 +314,7 @@ export default {
 				this.snOkList = this.snOkList.filter(v => {
 					return v && v.SnStart && v.SnEnd && v.Box;
 				});
-				this.KsnOkList = this.KsnOkList.filter(v => {
+				this.ksnOkList = this.ksnOkList.filter(v => {
 					return v && v.SnStart && v.SnEnd && v.Box;
 				});
 				formData.append('SnOkList', JSON.stringify(this.snOkList));
@@ -278,7 +325,10 @@ export default {
 					if (res.data.Ret == 0) {
 						
 					} else {
-						this.$message(res.data.Msg);
+						this.$message({
+							type:"error",
+							message:res.data.Msg
+						});
 					}
 				}).finally(()=>{
 					this.focus = 'expressId';
@@ -306,6 +356,13 @@ export default {
 					this.snList = res.data.Data && res.data.Data.SnList ? res.data.Data.SnList : [];
 					this.ksnList = res.data.Data && res.data.Data.KsnList ? res.data.Data.KsnList : [];
 					this.totalNum = res.data.Data&& res.data.Data.SnList?res.data.Data.SnList.length:0
+					console.log("snList="+JSON.stringify(this.snList))
+					console.log("ksnList="+JSON.stringify(this.ksnList))
+				}else{
+					this.$message({
+						message:res.data.Msg,
+						type:"error"
+					})
 				}
 			});
 		},
@@ -317,12 +374,12 @@ export default {
 };
 </script>
 
-<style>
-.el-form-item {
+<style scoped="scoped">
+.div {
 	position: relative;
 }
 .error {
-	position: absolute;
+	
 	left: 0px;
 	color: red;
 	top: 100%;
@@ -343,8 +400,7 @@ export default {
 	height: 50px;
 	left: 100%;
 	margin-left: 10px;
-	top: 50%;
-	transform: translateY(-50%);
+	top: 0px;
 }
 .box-right {
 	background: url(../../assets/right.png) no-repeat center;
@@ -356,5 +412,11 @@ export default {
 }
 .el-form {
 	width: 90%;
+}
+.el-button{
+	width: 100%;
+}
+.el-table,.div__label,.div__content,.error,.el-menu-item,.el-submenu__title,.el-message__content,div{
+	font-size:28px;
 }
 </style>

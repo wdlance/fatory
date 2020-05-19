@@ -40,7 +40,7 @@ export const MenuList = [{
 	url:"/sn"
 },{
 	id:4,
-	name:"发货管理",
+	name:"收件信息",
 	url:"/delivery"
 },{
 	id:5,

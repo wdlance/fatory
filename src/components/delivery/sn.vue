@@ -1,33 +1,41 @@
 <template>
 <div class="page-container">
 <el-form label-position="right" label-width="120px" :model="formData">
-  <el-form-item label="订单号">
+  <div class="form-group">
+		<div class="label">订单号</div>
     <el-input v-model="formData.orderId" ref="boxNumRef" placeholder="" readonly></el-input>
-  </el-form-item>
-    <el-form-item label="客户名称">
+  </div>
+    <div class="form-group">
+			<div class="label">客户名称</div>
     <el-input v-model="formData.recipientor" ref="boxNumRef" placeholder="" readonly></el-input>
-  </el-form-item>
-    <el-form-item label="发货数量（台）">
+  </div>
+    <div class="form-group">
+			<div class="label">发货数量（台）</div>
     <el-input v-model="formData.snTotal" ref="boxNumRef" placeholder="" readonly></el-input>
-  </el-form-item>
+  </div>
 
  <div style="display:flex;align-items:center;">
  <div style="flex:1">
   <template v-for="(item,index) in formData.snBox">
-  <el-form-item label="SN号起始"  :key="index">
-    <el-input v-model="item.SnStart"></el-input>
-  </el-form-item>
-  <el-form-item label="SN号终止"  :key="index">
-    <el-input v-model="item.SnEnd"></el-input>
-  </el-form-item>
+	  <div  :key="index">
+		  <div class="form-group">
+		  		<div class="label">SN号起始</div>
+		    <el-input v-model="item.SnStart"></el-input>
+		  </div>
+		  <div  class="form-group">
+		  		<div class="label">SN号终止</div>
+		    <el-input v-model="item.SnEnd"></el-input>
+		  </div>
+	  </div>
+ 
    </template>
   </div>
   <i class="el-icon-circle-plus-outline" style="font-size:50px;margin-left:15px;" @click="addSnBoxClick"></i>
   </div>
-
+<div class="operates">
    <el-button type="primary" @click="confirmClick">确 定</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-
+</div>
 </el-form>
 
 
@@ -81,7 +89,11 @@ methods:{
            if(res.data.Ret == 0){
              this.$router.go(-1)
            }else{
-						 this.$message(res.data.Msg)
+						 this.$message({
+						 	message:res.data.Msg,
+						 	type:"error",
+						 	duration:3000
+						 });
 					 }
        })
 
@@ -93,7 +105,7 @@ methods:{
 
 
 <style>
-.el-form-item{
+.div{
   position:relative;
   margin:20px 0;
 }

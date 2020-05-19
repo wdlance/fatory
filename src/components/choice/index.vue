@@ -18,7 +18,7 @@
 	    </el-option>
 	  </el-select>
 	</div>
-  <div class="block">
+  <div class="operates">
   <el-button type="primary" @click="searchClick">查询</el-button>
   <el-button type="primary" @click="resetClick">重置</el-button>
 </div>
@@ -110,7 +110,7 @@
 import {RECIPIENT_API_PATH} from "../../service/api"
 let StatusDefinite = [{
     id:0,
-    name:"无"
+    name:"全部"
 },{
     id:1,
     name:"正确"
@@ -180,6 +180,7 @@ export default{
 				  v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD HH:mm:ss")
 			  })
             this.tableData = res.data.Data
+						this.RowNum = res.data.Recordcount
           }
         })
       },
@@ -214,14 +215,28 @@ export default{
              this.$axios.post(RECIPIENT_API_PATH,formData).then(res=>{
 				 if(res.data.Ret == 0){
 					 if(this.path=='/choice'){
-						  this.$message("确认目测备货")
+						  
+							this.$message({
+								message:"确认目测备货",
+								type:"success",
+								duration:3000
+							});
 					 }else{
-						  this.$message("确认目测品管")
+						 this.$message({
+						 	message:"确认目测品管",
+						 	type:"success",
+						 	duration:3000
+						 });
+						  
 					 }
 					
 					 this.getRecipientList()
 				 }else{
-					 this.$message(res.data.Msg)
+					 this.$message({
+					 	message:res.data.Msg,
+					 	type:"error",
+					 	duration:3000
+					 });
 				 }
 			 })
         })
@@ -243,19 +258,9 @@ export default{
 .search-wrapper{
 display:flex;
 justy-content:flex-start;
+flex-wrap:wrap;
 }
-.label{
-    flex-shrink:0;
-    width:140px;
 
-}
-.block{
-    display:flex;
-    align-items:center;
-    padding:0 15px;
-    box-sizing:border-box;
-      min-width:33%;
-}
 td a{
   margin:10px 0;
   display:block;

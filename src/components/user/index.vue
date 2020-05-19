@@ -105,7 +105,11 @@ this.$refs.addUserDialogRef.show(0)
                  this.$message("刪除用戶成功")
                  this.getUserList()
              }else{
-                 this.$message(res.data.Msg)
+                 this.$message({
+                 	message:res.data.Msg,
+                 	type:"error",
+                 	duration:3000
+                 });
              }
          })
           });

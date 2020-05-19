@@ -1,10 +1,12 @@
 <template>
 <el-dialog label-position="right" :visible.sync="dialogFormVisible"  label-width="140">
   <el-form :model="formData">
-   <el-form-item label="订单号">
+   <div class="form-group" label="">
+	   <div class="label">订单号</div>
       <el-input v-model="formData.orderId" autocomplete="off"></el-input>
-    </el-form-item>
-      <el-form-item label="产品简称">
+    </div> 
+      <div class="form-group" label="产品简称">
+		    <div class="label">产品简称</div>
       <el-select v-model="formData.productId" placeholder="请选择">
   <el-option
       v-for="(item,index) in productList"
@@ -23,14 +25,16 @@
     </el-option>
     </el-select>
     <el-button type="primary" @click="addProductNameClick">+新增</el-button>
-    </el-form-item>
+    </div>
     
-     <el-form-item label="产品总数">
+     <div class="form-group">
+		   <div class="label">产品总数</div>
       <el-input v-model="formData.productTotalNum" autocomplete="off" type="number"></el-input>
-    </el-form-item>
-      <el-form-item label="产品数/每箱">
+    </div>
+      <div class="form-group">
+		   <div class="label">产品数/每箱</div>
       <el-input v-model="formData.productNumberInPerBox" autocomplete="off" type="number"></el-input>
-    </el-form-item>
+    </div>
   </el-form>
   <div slot="footer" class="dialog-footer">
 
@@ -89,7 +93,11 @@ export default{
                 if(res.data.Ret==0){
                     this.productList = res.data.Data
                 }else{
-					this.$message(res.data.Msg)
+					this.$message({
+						message:res.data.Msg,
+						type:"error",
+						duration:3000
+					});
 				}
             })
         },
@@ -102,7 +110,12 @@ export default{
          
         }).then(res=>{
             if(res.value == ""){
-                this.$message("请填写产品简称")
+                
+				this.$message({
+					message:"请填写产品简称",
+					type:"error",
+					duration:3000
+				});
                 return 
             }
             let formData = new FormData()
@@ -111,10 +124,19 @@ export default{
             formData.append("ProductBriefName",res.value)
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
-                    this.$message("产品添加成功")
+                    
+					this.$message({
+						message:"产品添加成功",
+						type:"success",
+						duration:3000
+					});
                      this.productNames.push(res.value)
                 }else{
-					this.$message(res.data.Msg)
+					this.$message({
+						message:res.data.Msg,
+						type:"error",
+						duration:3000
+					});
 				}
             })
            
@@ -129,7 +151,12 @@ export default{
             }
             this.hasClick = true
              if(this.formData.orderId==""||this.formData.productName==""||this.formData.productTotalNum==""||this.productNumberInPerBox==""){
-                this.$message("请填写信息")
+                
+				this.$message({
+					message:"请填写信息",
+					type:"error",
+					duration:3000
+				});
                 return
             }
             let formData = new FormData()
@@ -142,11 +169,20 @@ export default{
             this.$axios.post(ORDER_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
                     this.$emit("getOrderList")
-                    this.$message("订单创建成功")
+                    
+					this.$message({
+						message:"订单创建成功",
+						type:"success",
+						duration:3000
+					});
                     this.dialogFormVisible = false
 
                 }else{
-					this.$message(res.data.Msg)
+					this.$message({
+						message:res.data.Msg,
+						type:"error",
+						duration:3000
+					});
 				}
             }).finally(()=>{
                 this.hasClick = false
@@ -165,11 +201,20 @@ export default{
             formData.append("Token",sessionStorage.getItem("token"))
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret == 0){
-                    this.$message("刪除产品成功")
+                   
+					this.$message({
+						message:"删除产品成功",
+						type:"success",
+						duration:3000
+					});
                     this.productList.splice(index,1)
                     this.getProductList()
                 }else{
-					this.$message(res.data.Msg)
+					this.$message({
+						message:res.data.Msg,
+						type:"error",
+						duration:3000
+					});
 				}
             }).finally(()=>{
                 this.hasClick = false
@@ -179,29 +224,21 @@ export default{
 }
 </script>
 <style scoped="scoped">
-.el-form-item{
-display:flex;
-align-items:center;
-justy-content:space-between;
 
-}
 .el-input{
     width:100%;
 }
-.el-form-item__content{
-    flex:1;
-    display:flex;
-}
+
 .el-select{
     flex:1;
 }
-.el-form-item__label{
-    width:140px;
-    text-align:right;
-}
+
 .el-select-dropdown__item{
     display:flex;
     justy-content:space-between;
     align-items:center;
+}
+.label{
+	min-width:120px;
 }
 </style>;

@@ -1,19 +1,30 @@
 <template>
-<el-form label-position="right" label-width="200px">
-  <el-form-item label="每日自动备份时间">
+<el-form label-position="right">
+  <div class="">
+	    <div class="form-group">
+		<div class="label">每日自动备份时间</div>
     <el-input v-model="backupTime" @blur="changeBackupTime"></el-input>
+	</div>
 		 <div class="error" v-if="timeError">时间格式不正确，正确格式为00:00:00</div>
-  </el-form-item>
-  <el-form-item label="自动备份路径">
+		 
+  </div>
+  <div class="" style="text-align: left;">
+	   <div class="form-group">
+		<div class="label">自动备份路径</div>
     <el-input v-model="backupPath"></el-input>
-    备份文件以日期命名，格式：20200419.bak
-  </el-form-item>
-   <el-form-item label="定期删除日志">
+	</div>
+    <div class="meta">备份文件以日期命名，格式：20200419.bak</div>
+  </div>
+   <div class="form-group">
+		 <div class="label">定期删除日志</div>
     <el-input v-model="logClearTime" style="width:80%"></el-input>
     <span class="unit">单位：天</span>
-  </el-form-item>
-   <el-button type="primary" @click="confirmClick">确定</el-button>
-    <el-button @click="cancelClick">取消</el-button>
+  </div>
+	<div class="operates">
+		<el-button type="primary" @click="confirmClick">确定</el-button>
+		 <el-button @click="cancelClick">取消</el-button>
+	</div>
+ 
 </el-form>
 </template>
 <script>
@@ -57,7 +68,11 @@ export default{
           this.backupTime = res.data.Data.DatabaseBackupTime
           this.logClearTime = res.data.Data.LogAutocleanCycle
         }else{
-          this.$message(res.data.Msg)
+          this.$message({
+          	message:res.data.Msg,
+          	type:"error",
+          	duration:3000
+          });
         }
       })
     },
@@ -75,9 +90,17 @@ export default{
       formData.append("LogAutocleanCycle",this.logClearTime)
       this.$axios.post(SYSTEM_API_PATH,formData).then(res=>{
         if(res.data.Ret == 0){
-          this.$message("系统设置成功")
+          this.$message({
+          	message:"系统设置成功",
+          	type:"success",
+          	duration:3000
+          })
         }else{
-          this.$message(res.data.Msg)
+          this.$message({
+          	message:res.data.Msg,
+          	type:"error",
+          	duration:3000
+          });
         }
       })
     },
@@ -92,11 +115,16 @@ export default{
   text-align:left;
   margin-top: 30px;
 }
+
 .error{
-  
+  position: relative;
   left:0px;
   color:red;
   top: 100%;
   margin-top: 10px;
+  text-align: left;
+}
+.unit{
+	flex-shrink: 0;
 }
 </style>

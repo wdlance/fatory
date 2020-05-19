@@ -1,28 +1,37 @@
 <template>
 	<div class="page-container">
-		<el-form label-position="right" label-width="120px" :model="formData">
-			<el-form-item label="箱号"><el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @focus="focusInput('boxNum')"></el-input></el-form-item>
-			<el-form-item label="SN号起始">
-				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始" @focus="focusInput('snStart')"></el-input>
+		<el-form label-position="right" label-width="160px">
+			<div class="form-group">
+				<div class="label">箱号</div>
+				<el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @input="changeInput" @focus="focusInput('boxNum')"></el-input></div>
+			<div class="form-group">
+				<div class="label">SN号起始</div>
+				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始" @focus="focusInput('snStart')" @input="changeInput"></el-input>
 				<div class="error" v-if="!snStartRight">SN号起始 {{ formData.snStart }} 和箱号 {{ formData.boxNum }} 不匹配</div>
-			</el-form-item>
-			<el-form-item label="SN号终止">
-				<el-input v-model="formData.snEnd" ref="snEndRef" placeholder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input>
+			</div>
+			<div class="form-group">
+				<div class="label">SN号终止</div>
+				<el-input v-model="formData.snEnd" ref="snEndRef" placeholder="请扫描SN号终止" @focus="focusInput('snEnd')" @input="changeInput"></el-input>
 				<div class="error" v-if="!snEndRight">SN号终止 {{ formData.snEnd }} 和箱号 {{ formData.boxNum }} 不匹配</div>
-			</el-form-item>
+			</div>
 		</el-form>
 		<div class="line"></div>
 		<div style="margin-bottom:30px;">第{{ currentNum }}/{{ totalNum }}个</div>
-		<el-form label-position="right" label-width="120px">
-			<el-form-item label="SN号">
-				<input class="el-input__inner" v-model="formData.sn" ref="snRef" placeholder="请扫描单个产品SN号" @change="inputSn($event)" @focus="focusInput('sn')" />
+		<el-form label-position="right" label-width="160px">
+			<div class="form-group">
+				<div class="label">SN号</div>
+				<input class="el-input__inner" v-model="formData.sn" ref="snRef" placeholder="请扫描单个产品SN号" @input="changeInput" @focus="focusInput('sn')" />
 
 				<div class="box-right" v-if="snChecked && snRight"></div>
 				<div class="box-error" v-if="snChecked && !snRight"></div>
-				<div class="error" v-if="snChecked && !snRight">SN号 {{ formData.sn }} 和箱号 {{ formData.boxNum }} 不匹配</div>
-			</el-form-item>
+				<div class="error" v-if="snChecked && !snRight">SN号 {{ sn }} 和箱号 {{ formData.boxNum }} 不匹配</div>
+			</div>
+			<div class="form-group">
+				<el-button type="primary" style="margin-top:50px;" @click="confirmSetStatusBoxClick">强制确认</el-button>
+			</div>
 		</el-form>
-		<el-button type="primary" style="margin-top:50px;" @click="confirmSetStatusBoxClick">强制确认</el-button>
+		
+		
 	</div>
 </template>
 <script>
@@ -45,8 +54,12 @@ export default {
 			snRight: true,
 			snStartRight: true,
 			snEndRight: true,
-			boxData: {}, //从后台获取的每箱数据
+			boxData: {
+				SnList:[]
+			}, //从后台获取的每箱数据
 			snOkList: [],
+			hasEnter:false,
+			sn:"",
 			formData: {
 				boxNum: '',
 				snStart: '',
@@ -58,39 +71,69 @@ export default {
 	mounted() {
 		document.body.onkeydown = e => {
 			console.log('focus=' + this.focus);
+			
 			if (e.keyCode == 13) {
-				if (this.focus == 'boxNum') {
-					this.focus = 'snStart';
-					this.$refs.snStartRef.focus();
-				} else if (this.focus == 'snStart') {
-					this.getBoxBySnStart(this.snStart);
-				} else if (this.focus == 'snEnd') {
-					if (this.checkSnEnd()) {
-						this.focus = 'sn';
-						this.$refs.snRef.focus();
-					}
-				} else if (this.focus == 'sn') {
-					if (this.box == '' || this.snStart == '' || this.snEnd == '') {
-						return;
-					}
-					this.checkSn();
-					if (this.currentNum < this.totalNum) {
-					} else {
-						this.confirmSetStatusBoxClick();
-					}
-					
-				}
-			} else if (e.keyCode == 86) {
-				this.formData.sn = '';
+				console.log("扫描枪enter")
+				
+				this.enterInput()
+			} else if (e.keyCode == 86) {//CTRL+V
+		
+				
 			} //ctrl+v
 		};
 		this.$nextTick(() => {
 			this.$refs.boxNumRef.focus();
 		});
 	},
+
 	methods: {
+			changeInput(){
+				if(this.focus == 'sn'){
+					this.sn = this.formData.sn
+				}
+					this.hasEnter = false
+					console.log("ctrl+v")
+					setTimeout(()=>{
+						
+						if(!this.hasEnter){
+							
+							console.log("程序自动enter")
+								this.enterInput()
+						}
+					
+					},100)
+						
+			},
+		enterInput(){
+			this.hasEnter = true
+			if (this.focus == 'boxNum') {
+				this.focus = 'snStart';
+				this.$refs.snStartRef.focus();
+			} else if (this.focus == 'snStart') {
+				this.getBoxBySnStart(this.snStart);
+			} else if (this.focus == 'snEnd') {
+				if (this.checkSnEnd()) {
+					this.focus = 'sn';
+					this.$refs.snRef.focus();
+				}
+			} else if (this.focus == 'sn') {
+				if (this.box == '' || this.snStart == '' || this.snEnd == '') {
+					return;
+				}
+				this.checkSn();
+				this.formData.sn = ""
+				if (this.currentNum < this.totalNum) {
+					this.focus = "sn"
+					this.$refs.snRef.focus();
+				} else {
+					this.confirmSetStatusBoxClick();
+				}
+				
+			}
+		},
 		focusInput(str) {
 			this.focus = str;
+			
 		},
 		checkBox() {
 			if (this.formData.boxNum == this.boxData.Box) {
@@ -105,14 +148,20 @@ export default {
 				this.snStartRight = true;
 				return true;
 			} else {
-				this.$message("Sn号起始不匹配")
+				this.$message({
+					message:"Sn号起始不匹配",
+					type:"error"
+				})
 				this.snStartRight = false;
 				return false;
 			}
 		},
 		checkSnEnd() {
 			if (this.formData.snEnd != this.boxData.SnEnd) {
-				this.$message("Sn号终止不匹配")
+				this.$message({
+					type:"error",
+					message:"Sn号终止不匹配"
+				})
 				return false
 				//this.snEndRight = false;
 			} else {
@@ -123,8 +172,12 @@ export default {
 		checkSn() {
 			let sn = this.formData.sn;
 			this.snChecked = true;
+			
 			if (this.boxData.SnList.findIndex(v => v == sn) < 0) {
-				this.$message('Sn不匹配');
+				this.$message({
+					message:'Sn不匹配',
+					type:"error"
+				});
 				this.snRight = false;
 				return false
 			} else {
@@ -149,7 +202,10 @@ export default {
 						this.$refs.snEndRef.focus();
 					}
 				} else {
-					this.$message(res.data.Msg);
+					this.$message({
+						type:"error",
+						message:res.data.Msg
+					});
 				}
 			});
 		},
@@ -168,8 +224,17 @@ export default {
 				.post(BOX_API_PATH, formData)
 				.then(res => {
 					if (res.data.Ret == 0) {
+						this.$message({
+							type:"success",
+							message:"整箱正确",
+							duration:3000
+						})
 					} else {
-						this.$message(res.data.Msg);
+						this.$message({
+							type:"error",
+							message:res.data.Msg,
+							duration:3000
+						});
 					}
 				})
 				.finally(() => {
@@ -197,12 +262,12 @@ export default {
 };
 </script>
 
-<style>
-.el-form-item {
+<style scoped="scoped">
+.div {
 	position: relative;
 }
 .error {
-	position: absolute;
+	text-align: left;
 	left: 0px;
 	color: red;
 	top: 100%;
@@ -217,6 +282,9 @@ export default {
 	transform: translateY(-50%);
 	font-size: 50px;
 }
+.el-button{
+	width:100%;
+}
 .box-right,
 .box-error {
 	position: absolute;
@@ -224,9 +292,12 @@ export default {
 	height: 50px;
 	left: 100%;
 	margin-left: 10px;
-	top: 50%;
-	transform: translateY(-50%);
+	top: 0px;
+	
 }
+.el-table,.div__label,.div__content,.error,.el-menu-item,.el-submenu__title,.el-message__content,div{
+		font-size:28px;
+	}
 .box-right {
 	background: url(../../assets/right.png) no-repeat center;
 	background-size: contain;

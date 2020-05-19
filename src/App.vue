@@ -21,7 +21,7 @@ export default {
 	body{
 		padding: 0px;
 		margin:0px;
-	/* 	min-width:1024px; */
+	
 	}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -32,8 +32,12 @@ export default {
 
   font-size:22px;
 }
-.el-table,.el-form-item__label,.el-form-item__content,.error,.el-menu-item,.el-submenu__title{
+.el-table,.el-form-item__label,.el-form-item__content,.error,.el-menu-item,.el-submenu__title,.el-message__content,.el-dialog__body{
 	font-size:22px;
+}
+
+.el-message__icon{
+	    font-size: 50px;
 }
 .el-input__inner{
 		height:50px;
@@ -60,4 +64,53 @@ export default {
 	.search-wrapper{
 		padding:20px 0px;
 	}
+	
+	.form-group,.block,.operates{
+		display: flex;
+		flex-direction: row;
+		margin-top:30px;
+		align-items: center;
+		justify-content: flex-start;
+		position: relative;
+		
+	}
+	.error{
+		position: absolute;
+	}
+	.block{
+		margin:15px;
+	}
+	.label{
+			flex-shrink: 0;
+			margin-right: 10px;
+			
+		}
+		.meta{
+			color:#dcdcdc;
+		}
+	@media screen and (max-device-width:640px) {
+			.el-date-editor.el-input, .el-date-editor.el-input__inner{
+				width: 100%;
+			}
+			#app,.el-table,.el-form-item__label,.el-form-item__content,.error,.el-menu-item,.el-submenu__title,.el-message__content,.el-dialog__body{
+				font-size:20px;
+			}
+				
+			.form-group,.block{
+				flex-direction:column;
+				align-items: flex-start;
+				justify-content: center;
+			}
+			
+			.label{
+				margin-bottom: 10px;
+			}
+				.el-dialog,.el-message-box {
+					width:90%;
+				}
+				.el-message{
+					width:90%;
+					min-width:unset;
+				}
+		}
 </style>

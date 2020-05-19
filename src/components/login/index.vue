@@ -2,11 +2,9 @@
 	<div class="page-container">
 		<h1> 聚力得生产计划出入库系统</h1>
 		<el-form ref="loginFormRef" label-width="100px">
-		  <el-form-item
-		    label="角色"
-		    prop="role"
-		    
+		  <div class="form-group"
 		  >
+		  <div class="label">角色</div>
 		    <el-select v-model="searchForm.role" placeholder="" @change="roleChange">
 		        <el-option
 		          v-for="item in roles"
@@ -15,12 +13,11 @@
 		          :value="item.id">
 		        </el-option>
 		      </el-select>
-		  </el-form-item>
-		  <el-form-item
-		    label="账号"
-		    prop="role"
-		    
+		  </div>
+		  <div class="form-group"
+		  
 		  >
+		  <div class="label">账号</div>
 		    <el-select v-model="searchForm.account" placeholder="">
 		        <el-option
 		          v-for="(item,index) in accounts"
@@ -29,18 +26,18 @@
 		          :value="item.UserName">
 		        </el-option>
 		      </el-select>
-		  </el-form-item>
-		  <el-form-item
-		    label="密码"
-		    prop="role"
+		  </div>
+		  <div
+		   class="form-group"
 		    
 		  >
+		  <div class="label">密码</div>
 		   <el-input type="password" v-model="searchForm.password"></el-input>
-		  </el-form-item>
-		  <el-form-item>
+		  </div>
+		 
 		    <el-button type="primary" @click="loginClick" size="big">登录</el-button>
 		
-		  </el-form-item>
+
 		</el-form>
 	</div>
 	
@@ -68,7 +65,8 @@
 
 		methods:{
 			roleChange(){
-this.getUserList()
+this.getUserList(),
+this.searchForm.password = ""
 			},
 		getUserList(){
                
@@ -77,12 +75,18 @@ this.getUserList()
                 formData.append("Act","GetUserList")
                 this.$axios.post(USER_API_PATH,formData).then(res=>{
                     this.accounts = res.data.Data
-					this.searchForm.account = this.accounts[0]?this.accounts[0].UserName:""
+					
+					this.searchForm.account = this.accounts&&this.accounts[0]?this.accounts[0].UserName:""
                 })
             },
 			loginClick(){
 				if(this.searchForm.account==""||this.searchForm.password==""){
-					this.$message("账号/密码不能为空")
+					
+					this.$message({
+						message:"账号/密码不能为空",
+						type:"error",
+						duration:3000
+					});
 					return 
 				}
 				
@@ -116,7 +120,11 @@ this.getUserList()
 				}
 				
 					}else{
-						this.$message(res.data.Msg)
+						this.$message({
+							message:res.data.Msg,
+							type:"error",
+							duration:3000
+						});
 					}
 				})
 			}
@@ -126,26 +134,36 @@ this.getUserList()
 
 
 <style scoped="scoped">
-	h1{
-		margin-top: 150px;
-	}
+	
 	.page-container{
 		width: 100vw;
 		height: 100vh;
 		display: flex;
-		
 		flex-direction:column;
 		align-items:center;
-	}
-	.el-form{
-		width:500px;
-		flex:1;
-		display: flex;
-		flex-direction :column;
 		justify-content: center;
 	}
-	.el-select{
+	.el-form{
+		width:650px;
+		margin-top:20px;
+		
+	}
+	@media screen and (max-device-width:640px) {
+		.el-form{
+			width: 90%;
+		}
+		h1{
+			font-size: 20px;
+		}
+	}
+	.el-select,.el-input{
 		width:100%;
+	}
+	
+	button{
+		width: 100%;
+		height: 60px;
+		margin-top: 30px;
 	}
 	
 </style>

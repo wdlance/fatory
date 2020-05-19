@@ -1,5 +1,5 @@
 <template>
-	<div class="page-container" @click="toggleMenu(0)">
+	<div class="page-container">
 		<el-container>
 		  <el-header>
 			  <div class="header-left">
@@ -12,8 +12,8 @@
 			  </div>
 		  </el-header>
 		  <el-container>
-		    <el-aside style="width:220px;" :class="isPhone&&!showMenu?'hide':'show'">
-				<Menu></Menu>
+		    <el-aside style="width:250px;" :class="!showMenu?'hide':'show'">
+				<Menu v-on:closeMenu="closeMenu"></Menu>
 			</el-aside>
 		    <el-main>
 				<router-view></router-view>
@@ -32,15 +32,19 @@
 		components:{Menu,modifyPassword},
 		data(){
 			return{
-				showMenu:false
+				showMenu:true
 			}
 		},
 		computed:{
 			isPhone(){
+				
 				return window.screen.width * window.devicePixelRatio>768?false:true
 			}
 		},
 		methods:{
+			closeMenu(){
+				this.showMenu = false
+			},
 			toggleMenu(type){
 				if(type==0){
 					if(this.showMenu){
@@ -115,10 +119,5 @@
 		display: block;
 	}
 }
-@media screen and (min-device-width:768px) {
-	
-	.toggle-menu-btn{
-		display: none;
-	}
-}
+
 </style>
