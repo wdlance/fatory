@@ -108,8 +108,8 @@ export default{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
          
-        }).then(res=>{
-            if(res.value == ""){
+        }).then(data=>{
+            if(data.value == ""){
                 
 				this.$message({
 					message:"请填写产品简称",
@@ -121,7 +121,7 @@ export default{
             let formData = new FormData()
             formData.append("Act","AddProduct")
             formData.append("Token",sessionStorage.getItem("token"))
-            formData.append("ProductBriefName",res.value)
+            formData.append("ProductBriefName",data.value)
             this.$axios.post(PRODUCT_API_PATH,formData).then(res=>{
                 if(res.data.Ret==0){
                     
@@ -130,7 +130,7 @@ export default{
 						type:"success",
 						duration:3000
 					});
-                     this.productNames.push(res.value)
+                     this.productNames.push(data.value)
                 }else{
 					this.$message({
 						message:res.data.Msg,

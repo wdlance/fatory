@@ -3,21 +3,32 @@
 		<el-form label-position="right" label-width="160px">
 			<div style="margin-bottom: 20px;">第{{ currentNum }}/{{ totalNum }}箱</div>
 			<div class="form-group">
-				<div class="label">快运单号</div>
-				<el-input v-model="formData.expressId" ref="expressIdRef" placeholder="请扫描快运单号" @input="changeInput" @focus="focusInput('expressId')"></el-input>
+				<div class="flex">
+					<div class="label">快运单号</div>
+					<el-input v-model="formData.expressId" ref="expressIdRef" placeholder="请扫描快运单号" @input="changeInput" @focus="focusInput('expressId')"></el-input>
+				</div>
+				
 			</div>
 			<div class="form-group">
-				<div class="label">SN号起始</div>
-				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始"@input="changeInput"  @focus="focusInput('snStart')"></el-input>
+				<div class="flex">
+					<div class="label">SN号起始</div>
+					<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始"@input="changeInput"  @focus="focusInput('snStart')"></el-input>
+				</div>
 			</div>
 			<div class="form-group">
-				<div class="label">SN号终止</div>
-				<el-input v-model="formData.snEnd" ref="snEndRef" @input="changeInput" placeolder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input></div>
+				<div class="flex">
+					<div class="label">SN号终止</div>
+					<el-input v-model="formData.snEnd" ref="snEndRef" @input="changeInput" placeolder="请扫描SN号终止" @focus="focusInput('snEnd')"></el-input></div>
+				</div>
+				
 			<div class="form-group">
-				<div class="label">箱号</div>
-				<el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @input="changeInput" @focus="focusInput('boxNum')"></el-input>
-				<div class="box-right" src="../../assets/right.png" v-if="boxChecked && boxRight"></div>
-				<div class="box-error" src="../../assets/error.png" v-if="boxChecked && !boxRight"></div>
+				<div class="flex">
+					<div class="label">箱号</div>
+					<el-input v-model="formData.boxNum" ref="boxNumRef" placeholder="请扫描箱号" @input="changeInput" @focus="focusInput('boxNum')"></el-input>
+					<div class="box-right" src="../../assets/right.png" v-if="boxChecked && boxRight"></div>
+					<div class="box-error" src="../../assets/error.png" v-if="boxChecked && !boxRight"></div>
+				</div>
+				
 				<div class="error" v-if="boxChecked && !boxRight">快运单号 {{ formData.expressId }} 和箱号 {{ box }} 不匹配</div>
 			
 			</div>

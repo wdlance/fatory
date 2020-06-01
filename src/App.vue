@@ -64,8 +64,15 @@ export default {
 	.search-wrapper{
 		padding:20px 0px;
 	}
-	
 	.form-group,.block,.operates{
+		
+		margin-top:30px;
+		align-items: center;
+		justify-content: flex-start;
+		position: relative;
+		
+	}
+	.block,.operates{
 		display: flex;
 		flex-direction: row;
 		margin-top:30px;
@@ -74,8 +81,8 @@ export default {
 		position: relative;
 		
 	}
-	.error{
-		position: absolute;
+	.flex{
+		display: flex;
 	}
 	.block{
 		margin:15px;

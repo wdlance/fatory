@@ -66,7 +66,7 @@
 	   
 	   @current-change="handleCurrentChange"
       :current-page="pageData.Page"
-	  :page-size ="pageData.RowNumS"
+	  :page-size ="pageData.RowNum"
       layout="total,pager, prev, next"
       :total="RowNum"></el-pagination>
 </div>
@@ -132,6 +132,7 @@ export default{
            
             this.tableData = res.data.Data
             this.RowNum = res.data.Recordcount
+		
           }else{
 			  this.$message({
 			  	message:res.data.Msg,
