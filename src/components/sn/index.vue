@@ -62,13 +62,13 @@
       </el-table-column>
        
     </el-table>
-       <el-pagination
-	   
-	   @current-change="handleCurrentChange"
-      :current-page="pageData.Page"
-	  :page-size ="pageData.RowNum"
-      layout="total,pager, prev, next"
-      :total="RowNum"></el-pagination>
+     <el-pagination
+                @current-change="pageChange"
+       :current-page.sync="pageData.Page"
+       :page-size="pageData.RowNum"
+       layout="total, prev, pager, next"
+       :total="RowNum">
+     </el-pagination>
 </div>
 </template>
 <script>
@@ -105,10 +105,11 @@ export default{
         this.getSnList()
     },
     methods:{
-		handleCurrentChange(){
+		pageChange(){
 			this.getSnList()
 		},
         getSnList(){
+			
             let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetSnList")

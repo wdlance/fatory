@@ -389,8 +389,12 @@ export default {
 .div {
 	position: relative;
 }
+.label{
+	width: 150px;
+	text-align: right;
+}
 .error {
-	
+	padding-right: 160px;
 	left: 0px;
 	color: red;
 	top: 100%;

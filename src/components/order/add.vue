@@ -130,7 +130,8 @@ export default{
 						type:"success",
 						duration:3000
 					});
-                     this.productNames.push(data.value)
+					
+                    this.getProductList()
                 }else{
 					this.$message({
 						message:res.data.Msg,

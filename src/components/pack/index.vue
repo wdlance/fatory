@@ -14,7 +14,9 @@
 				<div class="flex">
 				<div class="label">SN号起始</div>
 				<el-input v-model="formData.snStart" ref="snStartRef" placeholder="请扫描SN号起始" @input="changeInput" @focus="focusInput('snStart')"></el-input>
+				
 				</div>
+				<div class="error" v-if="!snStartRight">SN号起始 {{ formData.snStart }}获取箱号失败</div>
 			</div>
 			<div class="form-group">
 				<div class="flex">
@@ -139,6 +141,10 @@ export default {
 				this.formData[this.focus] = ""
 				if(value.indexOf("/")!=-1){
 					this.formData.boxNum = value
+					if(this.formData.snStart!=''){
+						this.checkBox()
+					}
+					
 					if(!this.goSn()){
 						if(this.formData.snStart==""){
 							this.$refs.snStartRef.focus()
@@ -147,21 +153,18 @@ export default {
 						}
 					}
 				}else{
+					
 					if(this.formData.snStart==""){
 						this.formData.snStart = value
-						if(!this.goSn()){
-							if(this.formData.boxNum==""){
-								this.$refs.boxNumRef.focus()
-							}else{
-								
-								this.$refs.snEndRef.focus()
-							}
-						}
+						
 						this.getBoxBySnStart()
 					}else{
 						
-						if(value>this.formData.snStart){
+						if(value>=this.formData.snStart){
 							this.formData.snEnd = value
+							if(this.formData.snStart!=''){
+								this.checkSnEnd()()
+							}
 							if(!this.goSn()){
 								if(this.formData.boxNum==""){
 									this.$refs.boxNumRef.focus()
@@ -172,11 +175,9 @@ export default {
 						}else{
 							this.formData.snEnd = this.formData.snStart
 							this.formData.snStart = value
-							if(this.formData.boxNum==""){
-								this.$refs.boxNumRef.focus()
-							}else{
-								this.$refs.snEndRef.focus()
-							}
+						if(this.formData.snStart!=''){
+							this.checkSnEnd()
+						}
 							this.getBoxBySnStart()
 						}
 					}
@@ -255,13 +256,13 @@ export default {
 				return false
 			} else {
 				
-				if(this.snOkList.find(v=>v==sn)<0){
+				if(this.snOkList.findIndex(v=>v==sn)<0){
 					this.currentNum += 1;
 					this.snOkList = this.snOkList.concat([this.formData.sn]);
 					this.snRight = true;
 					return true
 				}else{
-					this.snRight = false;
+					
 					return false
 				}
 	
@@ -284,13 +285,24 @@ export default {
 						this.checkSnEnd()
 					}
 			       
-					
-			
+					if(!this.goSn()){
+						if(this.formData.boxNum==""){
+							this.$refs.boxNumRef.focus()
+						}else{
+							
+							this.$refs.snEndRef.focus()
+						}
+					}
+			        this.snStartRight = true
 				} else {
 					this.$message({
 						type:"error",
 						message:res.data.Msg
 					});
+					this.formData.snStart = ""
+					this.snStartRight = false
+					this.focus = "snStart"
+					this.$refs.snStartRef.focus()
 				}
 			});
 		},
@@ -351,7 +363,12 @@ export default {
 .div {
 	position: relative;
 }
+.label{
+	width: 150px;
+	text-align: right;
+}
 .error {
+	padding-left: 160px;
 	text-align: left;
 	left: 0px;
 	color: red;
