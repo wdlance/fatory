@@ -1,6 +1,6 @@
 
 
-let API_PATH_PRE="http://127.0.0.1:81"
+let API_PATH_PRE="http://127.0.0.1:81"//"http://julide.itgcs.tech:1983"
 console.log(process.env.NODE_ENV)
 if(process.env.NODE_ENV!='development'){
 	API_PATH_PRE = ""
@@ -34,3 +34,7 @@ export const UPLOAD_5CODE_API_PATH = API_PATH_PRE+"/Upload5Code"
 export const DOWNLOAD_DISTRIBUTE_API_PATH = API_PATH_PRE+"/DownloadExportInfo"
 export const DOWNLOAD_KUAYUEEXPRESS_API_PATH = API_PATH_PRE+"/DownloadKuayueExpress"
 export const DOWNLOAD_HANDOVER_API_PATH = API_PATH_PRE+"/DownloadHandover"
+
+export const DOWNLOAD_TODAY_DISTRIBUTE_API_PATH = API_PATH_PRE+"/DownloadExportInfo"
+export const DOWNLOAD_TODAY_KUAYUEEXPRESS_API_PATH = API_PATH_PRE+"/DownloadKuayueExpress"
+export const DOWNLOAD_TODAY_HANDOVER_API_PATH = API_PATH_PRE+"/DownloadHandover"

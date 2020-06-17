@@ -37,6 +37,12 @@
         prop="CreateTime"
         label="创建时间">
       </el-table-column>
+			<el-table-column
+			  prop="StatusBoxOkNum"
+			  label="数量"
+			 >
+			 
+			</el-table-column>
 <el-table-column
         prop="address"
         label="操作">
@@ -46,14 +52,14 @@
       </el-table-column>
    
     </el-table>
-           <el-pagination
-               @current-change="pageChange"
-      :current-page.sync="pageData.Page"
-      :page-size="pageData.RowNum"
-      layout="total, prev, pager, next"
-      :total="RowNum">
-    </el-pagination>
-      
+   
+      <el-pagination
+                 @current-change="pageChange"
+        :current-page.sync="pageData.Page"
+        :page-size="pageData.RowNum"
+        layout="total, prev, pager, next"
+        :total="RowNum">
+      </el-pagination>
 </div>
 </template>
 <script>
@@ -93,6 +99,7 @@ export default{
             res.data.Data.map(v=>{
               v.CreateTime = this.moment(v.CreateTime*1000).format("YYYY-MM-DD HH:mm:ss")
             })
+		
             this.tableData = res.data.Data
             this.RowNum = res.data.Recordcount
           }else{

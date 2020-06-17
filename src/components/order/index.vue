@@ -9,7 +9,8 @@
     <el-date-picker
       v-model="searchForm.startTime"
       type="date"
-	  format="yyyy-MM-dd"
+	:clearable="true"
+	  format="yyyy-MM-dd 00:00:00"
       placeholder="选择日期">
     </el-date-picker>
   </div>
@@ -18,7 +19,8 @@
     <el-date-picker
       v-model="searchForm.endTime"
       type="date"
-	  format="yyyy-MM-dd"
+	  :clearable="true"
+	  format="yyyy-MM-dd 23:59:59"
       placeholder="选择日期">
     </el-date-picker>
   </div>
@@ -86,7 +88,7 @@
 		        label="收件信息"
 		        width="120">
 				<template slot-scope="scope">
-				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}</a>
+				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}<span v-if="scope.row.RecipientSnTotal&&scope.row.RecipientSnTotal!=''">({{scope.row.RecipientSnTotal}})</span></a>
 				</template>
 		      </el-table-column>
 			   <el-table-column
@@ -132,7 +134,7 @@
 				 <template slot-scope="scope">
 				 <div>
 				 <a :href="scope.row.href1">
-				导出《跨越物流的发货信息》
+				导出《物流信息》
 				 </a>
 
     </div>
@@ -171,7 +173,9 @@
 </template>
 
 <script>
-import {ORDER_API_PATH,PRODUCT_API_PATH,UPLOAD_SN_API_PATH,UPLOAD_DISTRIBUTE_API_PATH,UPLOAD_WAYBILL_API_PATH,UPLOAD_5CODE_API_PATH,DOWNLOAD_DISTRIBUTE_API_PATH,DOWNLOAD_HANDOVER_API_PATH,DOWNLOAD_KUAYUEEXPRESS_API_PATH} from "../../service/api"
+import {ORDER_API_PATH,PRODUCT_API_PATH,UPLOAD_SN_API_PATH,UPLOAD_DISTRIBUTE_API_PATH,UPLOAD_WAYBILL_API_PATH,
+UPLOAD_5CODE_API_PATH,DOWNLOAD_DISTRIBUTE_API_PATH,DOWNLOAD_HANDOVER_API_PATH,DOWNLOAD_KUAYUEEXPRESS_API_PATH,
+DOWNLOAD_TODAY_DISTRIBUTE_API_PATH,DOWNLOAD_TODAY_KUAYUEEXPRESS_API_PATH,DOWNLOAD_TODAY_HANDOVER_API_PATH} from "../../service/api"
 import AddOrderDialog from "./add"
 	export default{
 		components:{AddOrderDialog},
@@ -182,19 +186,20 @@ import AddOrderDialog from "./add"
 				RowNum:0,
 				searchForm:{
 					startTime:new Date(new Date().toLocaleDateString()),
-					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+					endTime:new Date(new Date().toLocaleDateString()),
 					productId:0
 				},
 				pageData:{
 					Page:1,
 					RowNum:20
+				},
 				}
-			}
 		},
         created(){
 			this.getProductList()
             
         },
+		
         methods:{
 			downloadKuayueExpress(item){
 				let formData = new FormData()
@@ -290,36 +295,43 @@ import AddOrderDialog from "./add"
 			})
 			},
 			toSnListClick(item){
-				
-this.$router.push({
-	name:"Sn",
-	query:{
-		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
-	}
-})
-			},
-						toBoxListClick(item){
-this.$router.push({
-	name:"Box",
-	query:{
-		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
-	}
-})
-			},
-						toRecipientListClick(item){
-this.$router.push({
-	name:"Delivery",
-	query:{
-		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
-	}
-})
-			},
+						
+						let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+						 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+						
+			this.$router.push({
+				name:"Sn",
+				query:{
+					orderId:item.OrderID,
+					startTime:startTime,
+					endTime:endTime
+				}
+			})
+						},
+									toBoxListClick(item){
+										let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+										 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+			this.$router.push({
+				name:"Box",
+				query:{
+					orderId:item.OrderID,
+				startTime:startTime,
+				endTime:endTime
+				}
+			})
+						},
+									toRecipientListClick(item){
+										let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+										 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+			this.$router.push({
+				name:"Delivery",
+				query:{
+					orderId:item.OrderID,
+				startTime:startTime,
+				endTime:endTime
+				}
+			})
+						},
 			getProductList(){
 				 let formData = new FormData()
             formData.append("Act","GetProductList")
@@ -348,8 +360,10 @@ this.$router.push({
 				formData.append("ProductID",this.searchForm.productId)
 					formData.append("Page",this.pageData.Page-1)
 			formData.append("RowNum",this.pageData.RowNum)
-							formData.append("StartTime",this.searchForm.startTime/1000)
-			formData.append("EndTime",this.searchForm.endTime/1000)
+						let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+						      let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+						      formData.append("StartTime",new Date(startTime).getTime()/1000)
+						      formData.append("EndTime",new Date(endTime).getTime()/1000)
 				this.$axios.post(ORDER_API_PATH,formData).then(res=>{
 					
 					if(res.data.Ret == 0){
@@ -363,6 +377,7 @@ this.$router.push({
 								v.href1 = DOWNLOAD_KUAYUEEXPRESS_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
 								v.href2 = DOWNLOAD_HANDOVER_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
 								v.href3 = DOWNLOAD_DISTRIBUTE_API_PATH+"?Token="+sessionStorage.getItem("token")+"&OrderID="+v.OrderID
+								
 								return v
 							})
 						}else{
@@ -380,8 +395,8 @@ this.$router.push({
 			},
 			resetClick(){
 				this.searchForm = {
-						startTime:new Date(new Date().toLocaleDateString()),
-					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+					startTime:new Date(new Date().toLocaleDateString()),
+					endTime:new Date(new Date().toLocaleDateString()),
 					productName:""
 				}
 			},
@@ -448,6 +463,8 @@ td a{
 	margin:10px 0;
 	color: #3a8ee6;
 }
+	
+
 input[type=file]{
 	position:absolute;
 	left:0px;

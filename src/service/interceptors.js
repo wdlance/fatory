@@ -36,13 +36,15 @@ instance.interceptors.request.use(
       if (response.data.Ret) {
         switch (response.data.Ret) {
           case -8:
-
-            router.replace({
-              path: 'login',
-              query: {
-                redirect: router.currentRoute.fullPath
-              }
-            })
+					setTimeout(()=>{
+						router.replace({
+						  path: 'login',
+						  query: {
+						    redirect: router.currentRoute.fullPath
+						  }
+						})
+					},1000)
+           
         }
       }
       return response

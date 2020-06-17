@@ -1,7 +1,26 @@
 <template>
 <div class="page-container">
 <div class="search-wrapper">
-
+<div class="block">
+    <span class="label">开始时间</span>
+    <el-date-picker
+      v-model="searchForm.startTime"
+      type="date"
+	  :clearable="true"
+	  format="yyyy-MM-dd 00:00:00"
+      placeholder="选择日期">
+    </el-date-picker>
+  </div>
+   <div class="block">
+    <span class="label">结束时间</span>
+    <el-date-picker
+      v-model="searchForm.endTime"
+      type="date"
+	  :clearable="true"
+	  format="yyyy-MM-dd 23:59:59"
+      placeholder="选择日期">
+    </el-date-picker>
+  </div>
 <div class="block">
 <div class="label">订单号</div>
     <el-input v-model="searchForm.orderId"></el-input>
@@ -97,13 +116,14 @@
       </el-table-column>
    
     </el-table>
-      <el-pagination
-    @current-change="handleCurrentChange"
-      :current-page="pageData.Page"
-      :page-size="pageData.RowNum"
-      layout="total,pager, prev, next"
-      :total="RowNum">
-      </el-pagination> 
+
+	  <el-pagination
+	             @current-change="handleCurrentChange"
+	    :current-page.sync="pageData.Page"
+	    :page-size="pageData.RowNum"
+	    layout="total, prev, pager, next"
+	    :total="RowNum">
+	  </el-pagination>
 </div>
 </template>
 <script>
@@ -127,7 +147,9 @@ export default{
 					status:StatusDefinite,
             searchForm:{
                 orderId:"",
-								status:0
+								status:0,
+								startTime:new Date(new Date().toLocaleDateString()),
+								endTime:new Date(new Date().toLocaleDateString()),
             },
             RowNum:0,
             pageData:{
@@ -148,7 +170,7 @@ export default{
 	    handler: function(val, oldVal){
 	      this.getRecipientList()
 		  this.path = this.$route.path
-		   
+		  this.resetClick()
 	    },
 	    // 深度观察监听
 	    deep: true
@@ -162,6 +184,10 @@ export default{
     let formData = new FormData()
         formData.append("Token",sessionStorage.getItem("token"))
         formData.append("Act","GetRecipientList")
+		let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+		      let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+		      formData.append("StartTime",new Date(startTime).getTime()/1000)
+		      formData.append("EndTime",new Date(endTime).getTime()/1000)
         formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
         formData.append("OrderID",this.searchForm.orderId)
@@ -186,7 +212,10 @@ export default{
       },
         resetClick(){
             this.searchForm = {
-                boxNum:""
+                boxNum:"",
+				startTime:new Date(new Date().toLocaleDateString()),
+				endTime:new Date(new Date().toLocaleDateString()),
+				status:0
             }
         },
         searchClick(){

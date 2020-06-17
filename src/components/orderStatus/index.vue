@@ -1,24 +1,26 @@
 <template>
 <div class="page-container">
 <div class="search-wrapper">
-<div class="block">
-<div class="label">开始时间</div>
-<el-date-picker
+ <div class="block">
+    <span class="label">开始时间</span>
+    <el-date-picker
       v-model="searchForm.startTime"
       type="date"
-      placeholder="选择日期"
-      value-format="yyyy-MM-dd">
-    </el-date-picker>
-</div>
-<div class="block">
-<div class="label">结束时间</div>
-<el-date-picker
-      v-model="searchForm.endTime"
-      type="date"
-      value-format="yyyy-MM-dd"
+	:clearable="true"
+	  format="yyyy-MM-dd 00:00:00"
       placeholder="选择日期">
     </el-date-picker>
-</div>
+  </div>
+   <div class="block">
+    <span class="label">结束时间</span>
+    <el-date-picker
+      v-model="searchForm.endTime"
+      type="date"
+	  :clearable="true"
+	  format="yyyy-MM-dd 23:59:59"
+      placeholder="选择日期">
+    </el-date-picker>
+  </div>
 <div class="block">
 <div class="label">产品简称</div>
  <el-select v-model="searchForm.productId" placeholder="请选择">
@@ -117,7 +119,7 @@
         label="收件信息"
        >
        	<template slot-scope="scope">
-				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}</a>
+				<a @click="toRecipientListClick(scope.row)">{{scope.row.RecipientTotal}}<span v-if="scope.row.RecipientSnTotal&&scope.row.RecipientSnTotal!=''">({{scope.row.RecipientSnTotal}})</span></a>
 				</template>
       </el-table-column>
 
@@ -191,8 +193,8 @@ export default{
         return{
           productList:[],
             searchForm:{
-              	startTime:new Date(new Date().toLocaleDateString()),
-					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+           startTime:new Date(new Date().toLocaleDateString()),
+           endTime:new Date(new Date().toLocaleDateString()),
                 productId:0,
                 status1:0,
                 status2:0,
@@ -219,39 +221,47 @@ export default{
               productId:0,
                 boxNum:"",
                	startTime:new Date(new Date().toLocaleDateString()),
-					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+					endTime:new Date(new Date().toLocaleDateString()),
                 status1:0,
                 status2:0,
                 status3:0,
             }
         },
         toSnListClick(item){
+			
+			let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+			 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+			
 this.$router.push({
 	name:"Sn",
 	query:{
 		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
+		startTime:startTime,
+		endTime:endTime
 	}
 })
 			},
 						toBoxListClick(item){
+							let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+							 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
 this.$router.push({
 	name:"Box",
 	query:{
 		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
+	startTime:startTime,
+	endTime:endTime
 	}
 })
 			},
 						toRecipientListClick(item){
+							let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+							 let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
 this.$router.push({
 	name:"Delivery",
 	query:{
 		orderId:item.OrderID,
-		startTime:this.searchForm.startTime.getTime(),
-		endTime:this.searchForm.endTime.getTime()
+	startTime:startTime,
+	endTime:endTime
 	}
 })
 			},
@@ -289,8 +299,10 @@ this.$router.push({
 				formData.append("ProductID",this.searchForm.productId)
 					formData.append("Page",this.pageData.Page-1)
 			formData.append("RowNum",this.pageData.RowNum)
-							formData.append("StartTime",this.searchForm.startTime/1000)
-			formData.append("EndTime",this.searchForm.endTime/1000)
+  let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
+        let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
+        formData.append("StartTime",new Date(startTime).getTime()/1000)
+        formData.append("EndTime",new Date(endTime).getTime()/1000)
       		formData.append("StatusBox",this.searchForm.status1)
           		formData.append("StatusPrepare",this.searchForm.status2)
               		formData.append("StatusQc",this.searchForm.status3)

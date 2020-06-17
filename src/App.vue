@@ -53,6 +53,9 @@ export default {
 	.el-button{
 		font-size:22px;
 	}
+	.el-date-editor.el-input, .el-date-editor.el-input__inner{
+		width: 270px;
+	}
 	a{
 		text-decoration:none;
 		color:#333;
@@ -90,20 +93,24 @@ export default {
 	.label{
 			flex-shrink: 0;
 			margin-right: 10px;
-			
+			width: 150px;
+			text-align: right;
 		}
 		.meta{
 			color:#dcdcdc;
 		}
 	@media screen and (max-device-width:640px) {
+		.
 			.el-date-editor.el-input, .el-date-editor.el-input__inner{
 				width: 100%;
 			}
 			#app,.el-table,.el-form-item__label,.el-form-item__content,.error,.el-menu-item,.el-submenu__title,.el-message__content,.el-dialog__body{
 				font-size:20px;
 			}
-				
-			.form-group,.block{
+				.el-date-editor.el-input, .el-date-editor.el-input__inner{
+					width: 220px;
+				}
+			.form-group,.block,.flex{
 				flex-direction:column;
 				align-items: flex-start;
 				justify-content: center;
@@ -111,6 +118,7 @@ export default {
 			
 			.label{
 				margin-bottom: 10px;
+				text-align: left;
 			}
 				.el-dialog,.el-message-box {
 					width:90%;

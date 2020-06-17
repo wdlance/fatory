@@ -1,11 +1,11 @@
 <template>
 <el-dialog label-position="right" :visible.sync="dialogFormVisible"  label-width="140">
   <el-form :model="formData">
-   <div class="form-group" label="">
+   <div class="form-group flex" label="">
 	   <div class="label">订单号</div>
       <el-input v-model="formData.orderId" autocomplete="off"></el-input>
     </div> 
-      <div class="form-group" label="产品简称">
+      <div class="form-group flex" label="产品简称">
 		    <div class="label">产品简称</div>
       <el-select v-model="formData.productId" placeholder="请选择">
   <el-option
@@ -27,11 +27,11 @@
     <el-button type="primary" @click="addProductNameClick">+新增</el-button>
     </div>
     
-     <div class="form-group">
+     <div class="form-group flex">
 		   <div class="label">产品总数</div>
       <el-input v-model="formData.productTotalNum" autocomplete="off" type="number"></el-input>
     </div>
-      <div class="form-group">
+      <div class="form-group flex">
 		   <div class="label">产品数/每箱</div>
       <el-input v-model="formData.productNumberInPerBox" autocomplete="off" type="number"></el-input>
     </div>

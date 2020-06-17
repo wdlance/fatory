@@ -47,6 +47,10 @@ export const MenuList = [{
 	name:"箱号管理",
 	url:"/box"
 },{
+	id:11,
+	name:"产品管理",
+	url:"/product"
+},{
 	id:6,
 	name:"扫描装箱",
 	children:[{

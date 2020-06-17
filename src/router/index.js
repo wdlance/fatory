@@ -117,6 +117,13 @@ const router = new Router({
 			meta:{
 				auth:[5]
 			}
+		},{
+			path:"/product",
+			name:"Product",
+			component:resolve => require(['@/components/product/index.vue'], resolve),
+			meta:{
+				auth:[3]
+			}
 		}]
 		}
   ]

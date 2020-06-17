@@ -1,15 +1,15 @@
 <template>
 <div class="page-container">
 <el-form label-position="right" label-width="120px" :model="formData">
-  <div class="form-group">
+  <div class="form-group flex">
 		<div class="label">订单号</div>
     <el-input v-model="formData.orderId" ref="boxNumRef" placeholder="" readonly></el-input>
   </div>
-    <div class="form-group">
+    <div class="form-group flex">
 			<div class="label">客户名称</div>
     <el-input v-model="formData.recipientor" ref="boxNumRef" placeholder="" readonly></el-input>
   </div>
-    <div class="form-group">
+    <div class="form-group flex">
 			<div class="label">发货数量（台）</div>
     <el-input v-model="formData.snTotal" ref="boxNumRef" placeholder="" readonly></el-input>
   </div>
@@ -18,11 +18,11 @@
  <div style="flex:1">
   <template v-for="(item,index) in formData.snBox">
 	  <div  :key="index">
-		  <div class="form-group">
+		  <div class="form-group flex">
 		  		<div class="label">SN号起始</div>
 		    <el-input v-model="item.SnStart"></el-input>
 		  </div>
-		  <div  class="form-group">
+		  <div  class="form-group flex">
 		  		<div class="label">SN号终止</div>
 		    <el-input v-model="item.SnEnd"></el-input>
 		  </div>
@@ -104,7 +104,7 @@ methods:{
 
 
 
-<style>
+<style scoped="scoped">
 .div{
   position:relative;
   margin:20px 0;

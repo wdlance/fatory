@@ -1,24 +1,26 @@
 <template>
 <div class="page-container">
 <div class="search-wrapper">
-<div class="block">
-<div class="label">开始时间</div>
- <el-date-picker
+ <div class="block">
+    <span class="label">开始时间</span>
+    <el-date-picker
       v-model="searchForm.startTime"
       type="date"
-      format="yyyy-MM-dd"
+	:clearable="true"
+	  format="yyyy-MM-dd 00:00:00"
       placeholder="选择日期">
     </el-date-picker>
-</div>
-<div class="block">
-<div class="label">结束时间</div>
- <el-date-picker
+  </div>
+   <div class="block">
+    <span class="label">结束时间</span>
+    <el-date-picker
+		:clearable="true"
       v-model="searchForm.endTime"
       type="date"
-     format="yyyy-MM-dd"
+	  format="yyyy-MM-dd 23:59:59"
       placeholder="选择日期">
     </el-date-picker>
-</div>
+  </div>
 <div class="block">
 <div class="label">账号</div>
  <el-input v-model="searchForm.account"></el-input>
@@ -74,7 +76,7 @@ export default{
             tableData:[],
             searchForm:{
                      startTime:new Date(new Date().toLocaleDateString()),
-					endTime:new Date(new Date(new Date().toLocaleDateString()).getTime()+1*24*60*60*1000),
+                     endTime:new Date(new Date().toLocaleDateString()),
                 account:"",
                 content:""
             },
@@ -96,7 +98,7 @@ export default{
         formData.append("Page",this.pageData.Page-1)
         formData.append("RowNum",this.pageData.RowNum)
        let startTime = this.moment(this.searchForm.startTime).format("YYYY-MM-DD 00:00:00")
-        let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 00:00:00")
+        let endTime = this.moment(this.searchForm.endTime).format("YYYY-MM-DD 23:59:59")
         formData.append("StartTime",new Date(startTime).getTime()/1000)
         formData.append("EndTime",new Date(endTime).getTime()/1000)
         formData.append("UserName",this.searchForm.account)
@@ -128,8 +130,8 @@ export default{
       },
       resetClick(){
         this.searchForm = {
-           startTime:new Date(new Date().getTime()-1*24*60*60*1000),
-                endTime:new Date(),
+           startTime:new Date().toLocaleDateString(),
+                endTime:new Date().toLocaleDateString(),
                 account:"",
                 content:""
         }

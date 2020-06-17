@@ -2,7 +2,7 @@
 	<div class="page-container">
 		<h1> 聚力得生产计划出入库系统</h1>
 		<el-form ref="loginFormRef" label-width="100px">
-		  <div class="form-group"
+		  <div class="form-group flex"
 		  >
 		  <div class="label">角色</div>
 		    <el-select v-model="searchForm.role" placeholder="" @change="roleChange">
@@ -14,7 +14,7 @@
 		        </el-option>
 		      </el-select>
 		  </div>
-		  <div class="form-group"
+		  <div class="form-group flex"
 		  
 		  >
 		  <div class="label">账号</div>
@@ -28,15 +28,21 @@
 		      </el-select>
 		  </div>
 		  <div
-		   class="form-group"
+		   class="form-group flex"
 		    
 		  >
 		  <div class="label">密码</div>
 		   <el-input type="password" v-model="searchForm.password"></el-input>
 		  </div>
-		 
-		    <el-button type="primary" @click="loginClick" size="big">登录</el-button>
-		
+		 <div
+		  class="form-group flex"
+		   
+		 >
+		 <div class="label"></div>
+		 <el-button type="primary" @click="loginClick" size="big">登录</el-button>
+		 		
+		 </div>
+		  
 
 		</el-form>
 	</div>
@@ -100,16 +106,16 @@ this.searchForm.password = ""
 					localStorage.setItem("auth",JSON.stringify([1]))
 					this.$router.push('/user')
 				}else if(this.searchForm.role==2){
-					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10]))
+					localStorage.setItem("auth",JSON.stringify([2,3,4,5,6,7,8,9,10,11]))
 					this.$router.push('/order')
 				}else if(this.searchForm.role==3){
-					localStorage.setItem("auth",JSON.stringify([2,3,4,5]))
+					localStorage.setItem("auth",JSON.stringify([2,3,4,5,11]))
 					this.$router.push('/order')
 				}else if(this.searchForm.role==4){
-					localStorage.setItem("auth",JSON.stringify([6]))
+					localStorage.setItem("auth",JSON.stringify([5,,6]))
 					this.$router.push('/pack')
 				}else if(this.searchForm.role==5){
-					localStorage.setItem("auth",JSON.stringify([7]))
+					localStorage.setItem("auth",JSON.stringify([5,7]))
 					this.$router.push('/choice')
 				}else if(this.searchForm.role==6){
 					localStorage.setItem("auth",JSON.stringify([8,3,4,5]))

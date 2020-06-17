@@ -1,7 +1,7 @@
 <template>
 <el-form label-position="right">
   <div class="">
-	    <div class="form-group">
+	    <div class="form-group flex">
 		<div class="label">每日自动备份时间</div>
     <el-input v-model="backupTime" @blur="changeBackupTime"></el-input>
 	</div>
@@ -9,13 +9,13 @@
 		 
   </div>
   <div class="" style="text-align: left;">
-	   <div class="form-group">
+	   <div class="form-group flex">
 		<div class="label">自动备份路径</div>
     <el-input v-model="backupPath"></el-input>
 	</div>
     <div class="meta">备份文件以日期命名，格式：20200419.bak</div>
   </div>
-   <div class="form-group">
+   <div class="form-group flex">
 		 <div class="label">定期删除日志</div>
     <el-input v-model="logClearTime" style="width:80%"></el-input>
     <span class="unit">单位：天</span>
