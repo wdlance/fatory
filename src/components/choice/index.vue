@@ -258,7 +258,7 @@ export default{
 						 });
 						  
 					 }
-					
+					 
 					 this.getRecipientList()
 				 }else{
 					 this.$message({

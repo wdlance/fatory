@@ -1,6 +1,10 @@
 <template>
 <el-dialog label-position="right" :visible.sync="dialogFormVisible"  label-width="140">
   <el-form :model="formData">
+	  <div class="form-group flex" label="">
+	  	   <div class="label">源订单</div>
+	     <el-input v-model="formData.oriOrderId" autocomplete="off"></el-input>
+	   </div> 
    <div class="form-group flex" label="">
 	   <div class="label">订单号</div>
       <el-input v-model="formData.orderId" autocomplete="off"></el-input>
@@ -53,6 +57,7 @@ export default{
             dialogFormVisible:false,
             productList:[],
             formData:{
+				oriOrderId:"",
                 orderId:"",
                 productId:"",
                 productTotalNum:"",
@@ -161,6 +166,7 @@ export default{
                 return
             }
             let formData = new FormData()
+			formData.append("OriOrderID",this.formData.oriOrderId)
             formData.append("OrderID",this.formData.orderId)
             formData.append("ProductID",this.formData.productId)
             formData.append("ProductTotal",this.formData.productTotalNum)
